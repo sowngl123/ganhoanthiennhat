@@ -36,7 +36,6 @@ public class RegistrationController {
                            HttpSession session) {
         UserDto userDto = new UserDto();
             List<UserDto> dtos = service.findAllUsers();
-            userDto.setUser_Id((long) (dtos.size()) + 1);
             userDto.setUser_Name(user_Name);
             userDto.setUser_Password(user_Password);
             userDto.setUser_Email(user_Email);

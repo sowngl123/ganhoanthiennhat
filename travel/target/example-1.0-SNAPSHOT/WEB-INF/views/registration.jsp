@@ -62,7 +62,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                                 <label>E-mail</label>
 
                                 <input type="text" Name="user_Email" required="">
-                                <label>Tên đăng nhập</label>
+                                <label>Số điện thoại</label>
                                 <input type="text" class="name w3layouts agileits" Name="user_Name" required="">
                                 <label>Mật khẩu</label>
                                 <input type="password" Name="user_Password" required="">

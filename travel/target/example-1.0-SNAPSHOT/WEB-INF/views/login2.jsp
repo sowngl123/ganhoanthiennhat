@@ -4,10 +4,8 @@ Author URL: http://w3layouts.com
 License: Creative Commons Attribution 3.0 Unported
 License URL: http://creativecommons.org/licenses/by/3.0/
 -->
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/common/taglib.jsp" %>
-<c:url var="checkLoginUrl" value="/login2"/>
 
 <!DOCTYPE html>
 <html>
@@ -15,7 +13,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 <!-- Head -->
 <head>
 
-    <title>Travel Agency Sign In Form A Flat Responsive Widget Template :: W3layouts</title>
+    <title>Quên mật khẩu</title>
 
     <!-- Meta-Tags -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -48,8 +46,6 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 
     <div class="content-left w3layouts agileits">
         <img src="/resources/home/images/lgimage/background.jpg" alt="W3layouts Agileits">
-        <p>Plan your next dream trip. Select your destination and leave the rest to us.</p>
-        <a class="more w3layouts agileits" href="#">Xem thêm</a>
 
     </div>
 
@@ -59,39 +55,23 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                 <a class="hiddenanchor w3layouts agileits" id="tologin"></a>
                 <a class="hiddenanchor w3layouts agileits" id="toregister"></a>
                 <div id="wrapper">
-                    <div id="login" class="animate w3layouts agileits form">
-                        <h2 class="w3layouts agileits">Đăng nhập</h2>
-                        <form  id="sign_in" method="post" action="${checkLoginUrl}">
-                            <c:if test="${not empty error}">
-                                <span class="text-danger">
-                                    ${error}
-                                </span>
-                            </c:if>
-                            <label>Tên tài khoản</label>
-                            <input type="text" Name="user_Name" required="">
-                            <label>Mật khẩu</label>
-                            <input type="password" Name="user_Password" required="">
-                            <div class="send-button w3layouts agileits">
-                                <p><a href="#">Quên mật khẩu</a></p>
-                                <form>
-                                    <input type="submit" value="ĐĂNG NHẬP">
-                                </form>
-                                <div class="clear"></div>
-                            </div>
+                    <div id="register" class="animate w3layouts agileits form">
+                        <h2>Đăng ký</h2>
+                        <form  action="#" autocomplete="on" method="post">
+                            <form method="post">
+                                <label>Vui lòng nhập email để chúng tôi có thể gửi link đổi mật khẩu cho bạn.</label>
+                                <input type="text" Name="text" required="">
+                                <div class="send-button w3layouts agileits">
+                                    <form action="#" method="post">
+                                        <input type="submit" value="Xác nhận">
+                                    </form>
+                                </div>
+                            </form>
                             <p class="change_link w3layouts agileits">
-                                Bạn chưa có tài khoản? <a href="registration" class="to_register">Đăng ký!</a>
+                                <a href="login" class="to_register">Quay lại đăng nhập</a>
                             </p>
                             <div class="clear"></div>
                         </form>
-<%--                        <div class="social-icons w3layouts agileits">--%>
-<%--                            <p>OR USE YOUR SOCIAL ACCOUNTS</p>--%>
-<%--                            <ul>--%>
-<%--                                <li class="fb w3ls w3layouts agileits"><a href="#"><span class="icons w3layouts agileits"></span><span class="text w3layouts agileits">Facebook</span></a></li>--%>
-<%--                                <li class="twt w3ls w3layouts agileits"><a href="#"><span class="icons w3layouts agileits"></span><span class="text w3layouts agileits">Twitter</span></a></li>--%>
-<%--                                <div class="clear"></div>--%>
-<%--                            </ul>--%>
-<%--                        </div>--%>
-                        <div class="clear"></div>
                     </div>
                     <div class="clear"></div>
                 </div>
@@ -103,7 +83,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 </div>
 
 <div class="footer w3layouts agileits">
-    <p> &copy; 2020 - 2021 Đăng nhập | Thiết kế <a href="#" target="_blank">Dự án 2</a></p>
+    <p> &copy; Đăng ký | POLY TRAVEL <a href="http://w3layouts.com" target="_blank">POLY TRAVEL</a></p>
 </div>
 
 </body>

@@ -1,12 +1,9 @@
 package vn.nuce.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import vn.nuce.Utils;
 import vn.nuce.dto.UserDto;
 import vn.nuce.service.impl.UserServiceImpl;
 
@@ -16,12 +13,6 @@ import javax.servlet.http.HttpSession;
 public class LoginController {
     @Autowired
     UserServiceImpl service;
-//
-//    @GetMapping("/login2")
-//    public String imagelogin(ModelMap modelMap) {
-//        modelMap.addAttribute("location", modelMap);
-//        return "/login2";
-//    }
 
     @GetMapping("/login")
     public String showPageDefault(ModelMap modelMap) {

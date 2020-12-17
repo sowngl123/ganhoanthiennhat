@@ -125,7 +125,7 @@ public class OrderTourController {
         bookTourDto.setName(name);
         bookTourDto.setEmail(email);
         bookTourDto.setPhone(phone);
-        bookTourDto.setNote(note);
+        bookTourDto.setNotes(note);
         bookTourDto.setTourId(tourId);
         bookTourDto.setUserId(userId);
         bookTourDto.setNumAdult(numAdult);

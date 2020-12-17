@@ -15,7 +15,7 @@
 <script src="<c:url value="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"/>"></script>
 <!------ Include the above in your HEAD tag ---------->
 <head>
-    <title>User Info</title>
+    <title>Thông tin tài khoản</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet"
@@ -121,515 +121,17 @@
 
     <!-- Header -->
 
-    <header class="header">
+    <jsp:include page="/WEB-INF/views/jsp/home_header.jsp"/>
 
-        <!-- Top Bar -->
 
-        <div class="top_bar">
-            <div class="container">
-                <div class="row">
-                    <div class="col d-flex flex-row">
-                        <div class="phone">+45 345 3324 56789</div>
-                        <div class="social">
-                            <ul class="social_list">
-                                <li class="social_list_item"><a href="#"><i class="fa fa-pinterest"
-                                                                            aria-hidden="true"></i></a></li>
-                                <li class="social_list_item"><a href="#"><i class="fa fa-facebook"
-                                                                            aria-hidden="true"></i></a></li>
-                                <li class="social_list_item"><a href="#"><i class="fa fa-twitter"
-                                                                            aria-hidden="true"></i></a></li>
-                                <li class="social_list_item"><a href="#"><i class="fa fa-dribbble"
-                                                                            aria-hidden="true"></i></a></li>
-                                <li class="social_list_item"><a href="#"><i class="fa fa-behance"
-                                                                            aria-hidden="true"></i></a></li>
-                                <li class="social_list_item"><a href="#"><i class="fa fa-linkedin"
-                                                                            aria-hidden="true"></i></a></li>
-                            </ul>
-                        </div>
-                        <c:choose>
-                            <c:when test="${empty dto}">
-                                <div class="user_box ml-auto">
-                                    <div class="user_box_login user_box_link"><a href="${loginUrl}">login</a></div>
-                                    <div class="user_box_register user_box_link"><a href="#">register</a></div>
-                                </div>
-                            </c:when>
-                            <c:otherwise>
-                                <div class="user_box ml-auto">
-                                    <div class="user_box_login user_box_link"><a
-                                            href="/home/user_info">Welcome, ${dto.user_Name}</a></div>
-                                    <div class="user_box_register user_box_link"><a href="${logoutUrl}">logout</a></div>
-                                </div>
-                            </c:otherwise>
-                        </c:choose>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Navigation -->
-
-        <nav class="main_nav">
-            <div class="container">
-                <div class="row">
-                    <div class="col main_nav_col d-flex flex-row align-items-center justify-content-start">
-                        <div class="logo_container">
-                            <div class="logo"><a href="#"><img src="<c:url value="/resources/home/images/logo.png"/>"
-                                                               alt="">travelix</a></div>
-                        </div>
-                        <div class="main_nav_container ml-auto">
-                            <ul class="main_nav_list">
-                                <li class="main_nav_item"><a href="#">home</a></li>
-                                <li class="main_nav_item"><a href="#">about us</a></li>
-                                <li class="main_nav_item"><a href="#">offers</a></li>
-                                <li class="main_nav_item"><a href="#">news</a></li>
-                                <li class="main_nav_item"><a href="#">contact</a></li>
-                            </ul>
-                        </div>
-                        <div class="content_search ml-lg-0 ml-auto">
-                            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
-                                 xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                                 width="17px" height="17px" viewBox="0 0 512 512" enable-background="new 0 0 512 512"
-                                 xml:space="preserve">
-								<g>
-                                    <g>
-                                        <g>
-                                            <path class="mag_glass" fill="#FFFFFF" d="M78.438,216.78c0,57.906,22.55,112.343,63.493,153.287c40.945,40.944,95.383,63.494,153.287,63.494
-											s112.344-22.55,153.287-63.494C489.451,329.123,512,274.686,512,216.78c0-57.904-22.549-112.342-63.494-153.286
-											C407.563,22.549,353.124,0,295.219,0c-57.904,0-112.342,22.549-153.287,63.494C100.988,104.438,78.439,158.876,78.438,216.78z
-											M119.804,216.78c0-96.725,78.69-175.416,175.415-175.416s175.418,78.691,175.418,175.416
-											c0,96.725-78.691,175.416-175.416,175.416C198.495,392.195,119.804,313.505,119.804,216.78z"/>
-                                        </g>
-                                    </g>
-                                    <g>
-                                        <g>
-                                            <path class="mag_glass" fill="#FFFFFF" d="M6.057,505.942c4.038,4.039,9.332,6.058,14.625,6.058s10.587-2.019,14.625-6.058L171.268,369.98
-											c8.076-8.076,8.076-21.172,0-29.248c-8.076-8.078-21.172-8.078-29.249,0L6.057,476.693
-											C-2.019,484.77-2.019,497.865,6.057,505.942z"/>
-                                        </g>
-                                    </g>
-                                </g>
-							</svg>
-                        </div>
-
-                        <form id="search_form" class="search_form bez_1">
-                            <input type="search" class="search_content_input bez_1">
-                        </form>
-
-                        <div class="hamburger">
-                            <i class="fa fa-bars trans_200"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </nav>
-
-    </header>
-
-    <div class="menu trans_500">
-        <div class="menu_content d-flex flex-column align-items-center justify-content-center text-center">
-            <div class="menu_close_container">
-                <div class="menu_close"></div>
-            </div>
-            <div class="logo menu_logo"><a href="#"><img src="<c:url value="/resources/home/images/logo.png"/>" alt=""></a>
-            </div>
-            <ul>
-                <li class="menu_item"><a href="#">home</a></li>
-                <li class="menu_item"><a href="#">about us</a></li>
-                <li class="menu_item"><a href="#">offers</a></li>
-                <li class="menu_item"><a href="#">news</a></li>
-                <li class="menu_item"><a href="#">contact</a></li>
-            </ul>
-        </div>
-    </div>
+    <jsp:include page="/WEB-INF/views/jsp/home_menu.jsp"/>
 
     <!-- Home -->
 
-    <div class="home">
-
-        <!-- Home Slider -->
-
-        <div class="home_slider_container">
-
-            <div class="owl-carousel owl-theme home_slider">
-
-                <!-- Slider Item -->
-                <div class="owl-item home_slider_item">
-                    <!-- Image by https://unsplash.com/@anikindimitry -->
-                    <div class="home_slider_background"
-                         style="background-image:url(<c:url value="/resources/home/images/home_slider.jpg"/>)"></div>
-
-                    <div class="home_slider_content text-center">
-                        <div class="home_slider_content_inner" data-animation-in="flipInX"
-                             data-animation-out="animate-out fadeOut">
-                            <h1>discover</h1>
-                            <h1>the world</h1>
-                            <div class="button home_slider_button">
-                                <div class="button_bcg"></div>
-                                <a href="#">explore now<span></span><span></span><span></span></a></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slider Item -->
-                <div class="owl-item home_slider_item">
-                    <div class="home_slider_background"
-                         style="background-image:url(<c:url value="/resources/home/images/home_slider.jpg"/>)"></div>
-
-                    <div class="home_slider_content text-center">
-                        <div class="home_slider_content_inner" data-animation-in="flipInX"
-                             data-animation-out="animate-out fadeOut">
-                            <h1>discover</h1>
-                            <h1>the world</h1>
-                            <div class="button home_slider_button">
-                                <div class="button_bcg"></div>
-                                <a href="#">explore now<span></span><span></span><span></span></a></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slider Item -->
-                <div class="owl-item home_slider_item">
-                    <div class="home_slider_background"
-                         style="background-image:url(<c:url value="/resources/home/images/home_slider.jpg"/>)"></div>
-
-                    <div class="home_slider_content text-center">
-                        <div class="home_slider_content_inner" data-animation-in="flipInX"
-                             data-animation-out="animate-out fadeOut">
-                            <h1>discover</h1>
-                            <h1>the world</h1>
-                            <div class="button home_slider_button">
-                                <div class="button_bcg"></div>
-                                <a href="#">explore now<span></span><span></span><span></span></a></div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Home Slider Nav - Prev -->
-            <div class="home_slider_nav home_slider_prev">
-                <svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg"
-                     xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                     width="28px" height="33px" viewBox="0 0 28 33" enable-background="new 0 0 28 33"
-                     xml:space="preserve">
-					<defs>
-                        <linearGradient id='home_grad_prev'>
-                            <stop offset='0%' stop-color='#fa9e1b'/>
-                            <stop offset='100%' stop-color='#8d4fff'/>
-                        </linearGradient>
-                    </defs>
-                    <path class="nav_path" fill="#F3F6F9" d="M19,0H9C4.029,0,0,4.029,0,9v15c0,4.971,4.029,9,9,9h10c4.97,0,9-4.029,9-9V9C28,4.029,23.97,0,19,0z
-					M26,23.091C26,27.459,22.545,31,18.285,31H9.714C5.454,31,2,27.459,2,23.091V9.909C2,5.541,5.454,2,9.714,2h8.571
-					C22.545,2,26,5.541,26,9.909V23.091z"/>
-                    <polygon class="nav_arrow" fill="#F3F6F9" points="15.044,22.222 16.377,20.888 12.374,16.885 16.377,12.882 15.044,11.55 9.708,16.885 11.04,18.219
-					11.042,18.219 "/>
-				</svg>
-            </div>
-
-            <!-- Home Slider Nav - Next -->
-            <div class="home_slider_nav home_slider_next">
-                <svg version="1.1" id="Layer_3" xmlns="http://www.w3.org/2000/svg"
-                     xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                     width="28px" height="33px" viewBox="0 0 28 33" enable-background="new 0 0 28 33"
-                     xml:space="preserve">
-					<defs>
-                        <linearGradient id='home_grad_next'>
-                            <stop offset='0%' stop-color='#fa9e1b'/>
-                            <stop offset='100%' stop-color='#8d4fff'/>
-                        </linearGradient>
-                    </defs>
-                    <path class="nav_path" fill="#F3F6F9" d="M19,0H9C4.029,0,0,4.029,0,9v15c0,4.971,4.029,9,9,9h10c4.97,0,9-4.029,9-9V9C28,4.029,23.97,0,19,0z
-				M26,23.091C26,27.459,22.545,31,18.285,31H9.714C5.454,31,2,27.459,2,23.091V9.909C2,5.541,5.454,2,9.714,2h8.571
-				C22.545,2,26,5.541,26,9.909V23.091z"/>
-                    <polygon class="nav_arrow" fill="#F3F6F9" points="13.044,11.551 11.71,12.885 15.714,16.888 11.71,20.891 13.044,22.224 18.379,16.888 17.048,15.554
-				17.046,15.554 "/>
-				</svg>
-            </div>
-
-            <!-- Home Slider Dots -->
-
-            <div class="home_slider_dots">
-                <ul id="home_slider_custom_dots" class="home_slider_custom_dots">
-                    <li class="home_slider_custom_dot active">
-                        <div></div>
-                        01.
-                    </li>
-                    <li class="home_slider_custom_dot">
-                        <div></div>
-                        02.
-                    </li>
-                    <li class="home_slider_custom_dot">
-                        <div></div>
-                        03.
-                    </li>
-                </ul>
-            </div>
-
-        </div>
-
-    </div>
-
+    <jsp:include page="/WEB-INF/views/jsp/home_slide.jsp"/>
     <!-- Search -->
 
-    <div class="search">
-
-
-        <!-- Search Contents -->
-
-        <div class="container fill_height">
-            <div class="row fill_height">
-                <div class="col fill_height">
-
-                    <!-- Search Tabs -->
-
-                    <div class="search_tabs_container">
-                        <div class="search_tabs d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-lg-between justify-content-start">
-                            <div class="search_tab active d-flex flex-row align-items-center justify-content-lg-center justify-content-start">
-                                <img src="<c:url value="/resources/home/images/suitcase.png"/>"
-                                     alt=""><span>hotels</span></div>
-                            <div class="search_tab d-flex flex-row align-items-center justify-content-lg-center justify-content-start">
-                                <img src="<c:url value="/resources/home/images/bus.png"/>" alt="">car rentals
-                            </div>
-                            <div class="search_tab d-flex flex-row align-items-center justify-content-lg-center justify-content-start">
-                                <img src="<c:url value="/resources/home/images/departure.png"/>" alt="">flights
-                            </div>
-                            <div class="search_tab d-flex flex-row align-items-center justify-content-lg-center justify-content-start">
-                                <img src="<c:url value="/resources/home/images/island.png"/>" alt="">trips
-                            </div>
-                            <div class="search_tab d-flex flex-row align-items-center justify-content-lg-center justify-content-start">
-                                <img src="<c:url value="/resources/home/images/cruise.png"/>" alt="">cruises
-                            </div>
-                            <div class="search_tab d-flex flex-row align-items-center justify-content-lg-center justify-content-start">
-                                <img src="<c:url value="/resources/home/images/diving.png"/>" alt="">activities
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Search Panel -->
-
-                    <div class="search_panel active">
-                        <form action="#" id="search_form_1"
-                              class="search_panel_content d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-lg-between justify-content-start">
-                            <div class="search_item">
-                                <div>destination</div>
-                                <input type="text" class="destination search_input" required="required">
-                            </div>
-                            <div class="search_item">
-                                <div>check in</div>
-                                <input type="text" class="check_in search_input" placeholder="YYYY-MM-DD">
-                            </div>
-                            <div class="search_item">
-                                <div>check out</div>
-                                <input type="text" class="check_out search_input" placeholder="YYYY-MM-DD">
-                            </div>
-                            <div class="search_item">
-                                <div>adults</div>
-                                <select name="adults" id="adults_1" class="dropdown_item_select search_input">
-                                    <option>01</option>
-                                    <option>02</option>
-                                    <option>03</option>
-                                </select>
-                            </div>
-                            <div class="search_item">
-                                <div>children</div>
-                                <select name="children" id="children_1" class="dropdown_item_select search_input">
-                                    <option>0</option>
-                                    <option>02</option>
-                                    <option>03</option>
-                                </select>
-                            </div>
-                            <button class="button search_button">search<span></span><span></span><span></span></button>
-                        </form>
-                    </div>
-
-                    <!-- Search Panel -->
-
-                    <div class="search_panel">
-                        <form action="#" id="search_form_2"
-                              class="search_panel_content d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-lg-between justify-content-start">
-                            <div class="search_item">
-                                <div>destination</div>
-                                <input type="text" class="destination search_input" required="required">
-                            </div>
-                            <div class="search_item">
-                                <div>check in</div>
-                                <input type="text" class="check_in search_input" placeholder="YYYY-MM-DD">
-                            </div>
-                            <div class="search_item">
-                                <div>check out</div>
-                                <input type="text" class="check_out search_input" placeholder="YYYY-MM-DD">
-                            </div>
-                            <div class="search_item">
-                                <div>adults</div>
-                                <select name="adults" id="adults_2" class="dropdown_item_select search_input">
-                                    <option>01</option>
-                                    <option>02</option>
-                                    <option>03</option>
-                                </select>
-                            </div>
-                            <div class="search_item">
-                                <div>children</div>
-                                <select name="children" id="children_2" class="dropdown_item_select search_input">
-                                    <option>0</option>
-                                    <option>02</option>
-                                    <option>03</option>
-                                </select>
-                            </div>
-                            <button class="button search_button">search<span></span><span></span><span></span></button>
-                        </form>
-                    </div>
-
-                    <!-- Search Panel -->
-
-                    <div class="search_panel">
-                        <form action="#" id="search_form_3"
-                              class="search_panel_content d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-lg-between justify-content-start">
-                            <div class="search_item">
-                                <div>destination</div>
-                                <input type="text" class="destination search_input" required="required">
-                            </div>
-                            <div class="search_item">
-                                <div>check in</div>
-                                <input type="text" class="check_in search_input" placeholder="YYYY-MM-DD">
-                            </div>
-                            <div class="search_item">
-                                <div>check out</div>
-                                <input type="text" class="check_out search_input" placeholder="YYYY-MM-DD">
-                            </div>
-                            <div class="search_item">
-                                <div>adults</div>
-                                <select name="adults" id="adults_3" class="dropdown_item_select search_input">
-                                    <option>01</option>
-                                    <option>02</option>
-                                    <option>03</option>
-                                </select>
-                            </div>
-                            <div class="search_item">
-                                <div>children</div>
-                                <select name="children" id="children_3" class="dropdown_item_select search_input">
-                                    <option>0</option>
-                                    <option>02</option>
-                                    <option>03</option>
-                                </select>
-                            </div>
-                            <button class="button search_button">search<span></span><span></span><span></span></button>
-                        </form>
-                    </div>
-
-                    <!-- Search Panel -->
-
-                    <div class="search_panel">
-                        <form action="#" id="search_form_4"
-                              class="search_panel_content d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-lg-between justify-content-start">
-                            <div class="search_item">
-                                <div>destination</div>
-                                <input type="text" class="destination search_input" required="required">
-                            </div>
-                            <div class="search_item">
-                                <div>check in</div>
-                                <input type="text" class="check_in search_input" placeholder="YYYY-MM-DD">
-                            </div>
-                            <div class="search_item">
-                                <div>check out</div>
-                                <input type="text" class="check_out search_input" placeholder="YYYY-MM-DD">
-                            </div>
-                            <div class="search_item">
-                                <div>adults</div>
-                                <select name="adults" id="adults_4" class="dropdown_item_select search_input">
-                                    <option>01</option>
-                                    <option>02</option>
-                                    <option>03</option>
-                                </select>
-                            </div>
-                            <div class="search_item">
-                                <div>children</div>
-                                <select name="children" id="children_4" class="dropdown_item_select search_input">
-                                    <option>0</option>
-                                    <option>02</option>
-                                    <option>03</option>
-                                </select>
-                            </div>
-                            <button class="button search_button">search<span></span><span></span><span></span></button>
-                        </form>
-                    </div>
-
-                    <!-- Search Panel -->
-
-                    <div class="search_panel">
-                        <form action="#" id="search_form_5"
-                              class="search_panel_content d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-lg-between justify-content-start">
-                            <div class="search_item">
-                                <div>destination</div>
-                                <input type="text" class="destination search_input" required="required">
-                            </div>
-                            <div class="search_item">
-                                <div>check in</div>
-                                <input type="text" class="check_in search_input" placeholder="YYYY-MM-DD">
-                            </div>
-                            <div class="search_item">
-                                <div>check out</div>
-                                <input type="text" class="check_out search_input" placeholder="YYYY-MM-DD">
-                            </div>
-                            <div class="search_item">
-                                <div>adults</div>
-                                <select name="adults" id="adults_5" class="dropdown_item_select search_input">
-                                    <option>01</option>
-                                    <option>02</option>
-                                    <option>03</option>
-                                </select>
-                            </div>
-                            <div class="search_item">
-                                <div>children</div>
-                                <select name="children" id="children_5" class="dropdown_item_select search_input">
-                                    <option>0</option>
-                                    <option>02</option>
-                                    <option>03</option>
-                                </select>
-                            </div>
-                            <button class="button search_button">search<span></span><span></span><span></span></button>
-                        </form>
-                    </div>
-
-                    <!-- Search Panel -->
-
-                    <div class="search_panel">
-                        <form action="#" id="search_form_6"
-                              class="search_panel_content d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-lg-between justify-content-start">
-                            <div class="search_item">
-                                <div>destination</div>
-                                <input type="text" class="destination search_input" required="required">
-                            </div>
-                            <div class="search_item">
-                                <div>check in</div>
-                                <input type="text" class="check_in search_input" placeholder="YYYY-MM-DD">
-                            </div>
-                            <div class="search_item">
-                                <div>check out</div>
-                                <input type="text" class="check_out search_input" placeholder="YYYY-MM-DD">
-                            </div>
-                            <div class="search_item">
-                                <div>adults</div>
-                                <select name="adults" id="adults_6" class="dropdown_item_select search_input">
-                                    <option>01</option>
-                                    <option>02</option>
-                                    <option>03</option>
-                                </select>
-                            </div>
-                            <div class="search_item">
-                                <div>children</div>
-                                <select name="children" id="children_6" class="dropdown_item_select search_input">
-                                    <option>0</option>
-                                    <option>02</option>
-                                    <option>03</option>
-                                </select>
-                            </div>
-                            <button class="button search_button">search<span></span><span></span><span></span></button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <jsp:include page="/WEB-INF/views/jsp/home_search.jsp"/>
     <!--Main-->
     <br/><br/>
     <h2 style="padding-left: 10%;">HỒ SƠ TÀI KHOẢN</h2>
@@ -705,13 +207,12 @@
                                                 <a class="btn btn-lg" style="background-color: #fa9e1b; color: white;"
                                                    href="/home/user_info/update"><i
                                                         class="glyphicon glyphicon-user"></i> Chỉnh sửa thông tin cá
-                                                    nhân</a>
+                                                    nhân</a>&nbsp&nbsp
                                             </td>
                                             <td>
                                                 <a class="btn btn-lg" style="background-color: #fa9e1b; color: white;"
-                                                   href="/home/user_info/update"><i
-                                                        class="glyphicon glyphicon-pencil"></i> Chỉnh sửa thông tin tài
-                                                    khoản</a>
+                                                   href="/home/user_info/change_password"><i
+                                                        class="glyphicon glyphicon-pencil"></i> Đổi mật khẩu</a>
                                             </td>
                                         </tr>
                                     </table>
@@ -728,34 +229,27 @@
                             <table id="bookTour">
                                 <thead>
                                 <tr>
-                                    <th>Giá</th>
+                                    <th>Tên tour</th>
                                     <th>Ngày đăng ký</th>
-                                    <th>Số lượng trẻ em</th>
-                                    <th>Số lượng người lớn</th>
-                                    <th>Trạng thái thanh toán</th>
+                                    <th>Trạng thái</th>
+                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <c:forEach var="list" items="${listBookTour}">
                                     <tr>
-                                        <td>${list.price}</td>
-                                        <td>${list.createDate}</td>
-                                        <td>${list.numChild}</td>
-                                        <td>${list.numAdult}</td>
+                                        <td><p style="color: black">${list.tourName}</p></td>
+                                        <td><p style="color: black">${list.createDateFormat}</p></td>
                                         <td>
-                                            <c:choose>
-                                                <c:when test="${list.payStatus == 1}">
-                                                    <p>Đã thanh toán</p>
-                                                </c:when>
-                                                <c:when test="${list.payStatus == 0}">
-                                                    <p>Chưa thanh toán</p>
-                                                    <%-- Làm gì đó ở đây khi điều kiện 2 đúng  --%>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <p>Chưa thanh toán</p>
-                                                    <%-- Câu lệnh sẽ được thực thi khi tất cả các điều kiện tại <c:when> ở trên sai.  --%>
-                                                </c:otherwise>
-                                            </c:choose>
+                                            <p id="payStatusF" style="color: black"></p>
+                                            <input type="hidden" value="${list.payStatus}" id="payStatus">
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-lg btn-success" type="button"
+                                                    data-target="#exampleModalCenter" data-toggle="modal"
+                                                    onclick="showBookTour(${list.registration_Id})">
+                                                <i class="glyphicon glyphicon-info-sign"></i> Chi tiết
+                                            </button>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -765,211 +259,130 @@
                         </form>
                     </div>
                     <div class="tab-pane" id="listwait">
-                            <br/><br/>
-                            <table id="bookTour1">
-                                <thead>
+                        <br/><br/>
+                        <table id="bookTour1">
+                            <thead>
+                            <tr>
+                                <th>Tên tour</th>
+                                <th>Ngày đăng ký</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <c:forEach var="listW" items="${listBookTourWait}">
                                 <tr>
-                                    <th>Giá</th>
-                                    <th>Ngày đăng ký</th>
-                                    <th>Số lượng trẻ em</th>
-                                    <th>Số lượng người lớn</th>
-                                    <th></th>
+                                    <td><p style="color: black">${listW.tourName}</p></td>
+                                    <td><p style="color: black">${listW.createDateFormat}</p></td>
+                                    <td>
+                                        <button class="btn btn-lg btn-success" type="button"
+                                                data-target="#exampleModalCenter" data-toggle="modal"
+                                                onclick="showBookTour(${listW.registration_Id})">
+                                            <i class="glyphicon glyphicon-info-sign"></i> Chi tiết
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-lg btn-danger"
+                                                onclick="handleDelete(${listW.registration_Id})">
+                                            <i class="glyphicon glyphicon-remove"></i> Hủy đặt
+                                        </button>
+                                    </td>
                                 </tr>
-                                </thead>
-                                <tbody>
-                                <c:forEach var="list" items="${listBookTourWait}">
-                                    <tr>
-                                        <td>${list.price}</td>
-                                        <td>${list.createDate}</td>
-                                        <td>${list.numChild}</td>
-                                        <td>${list.numAdult}</td>
-                                        <td>
-                                            <button class="btn btn-lg btn-danger" onclick="handleDelete(${list.registration_Id})">
-                                                <i class="glyphicon glyphicon-remove"></i>Hủy đặt
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                                </tbody>
-                            </table>
-                            <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+                            </c:forEach>
+                            </tbody>
+                        </table>
+                        <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <!-- Footer -->
-
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-
-                <!-- Footer Column -->
-                <div class="col-lg-3 footer_column">
-                    <div class="footer_col">
-                        <div class="footer_content footer_about">
-                            <div class="logo_container footer_logo">
-                                <div class="logo"><a href="#"><img
-                                        src="<c:url value="/resources/home/images/logo.png"/>" alt="">travelix</a></div>
-                            </div>
-                            <p class="footer_about_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                Vivamus quis vu lputate eros, iaculis consequat nisl. Nunc et suscipit urna. Integer
-                                eleme ntum orci eu vehicula pretium.</p>
-                            <ul class="footer_social_list">
-                                <li class="footer_social_item"><a href="#"><i class="fa fa-pinterest"></i></a></li>
-                                <li class="footer_social_item"><a href="#"><i class="fa fa-facebook-f"></i></a></li>
-                                <li class="footer_social_item"><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                <li class="footer_social_item"><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                                <li class="footer_social_item"><a href="#"><i class="fa fa-behance"></i></a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Footer Column -->
-                <div class="col-lg-3 footer_column">
-                    <div class="footer_col">
-                        <div class="footer_title">blog posts</div>
-                        <div class="footer_content footer_blog">
-
-                            <!-- Footer blog item -->
-                            <div class="footer_blog_item clearfix">
-                                <div class="footer_blog_image"><img
-                                        src="<c:url value="/resources/home/images/footer_blog_1.jpg"/>"
-                                        alt="https://unsplash.com/@avidenov"></div>
-                                <div class="footer_blog_content">
-                                    <div class="footer_blog_title"><a href="blog.html">Travel with us this year</a>
-                                    </div>
-                                    <div class="footer_blog_date">Nov 29, 2017</div>
-                                </div>
-                            </div>
-
-                            <!-- Footer blog item -->
-                            <div class="footer_blog_item clearfix">
-                                <div class="footer_blog_image"><img
-                                        src="<c:url value="/resources/home/images/footer_blog_2.jpg"/>"
-                                        alt="https://unsplash.com/@deannaritchie"></div>
-                                <div class="footer_blog_content">
-                                    <div class="footer_blog_title"><a href="blog.html">New destinations for you</a>
-                                    </div>
-                                    <div class="footer_blog_date">Nov 29, 2017</div>
-                                </div>
-                            </div>
-
-                            <!-- Footer blog item -->
-                            <div class="footer_blog_item clearfix">
-                                <div class="footer_blog_image"><img
-                                        src="<c:url value="/resources/home/images/footer_blog_3.jpg"/>"
-                                        alt="https://unsplash.com/@bergeryap87"></div>
-                                <div class="footer_blog_content">
-                                    <div class="footer_blog_title"><a href="blog.html">Travel with us this year</a>
-                                    </div>
-                                    <div class="footer_blog_date">Nov 29, 2017</div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Footer Column -->
-                <div class="col-lg-3 footer_column">
-                    <div class="footer_col">
-                        <div class="footer_title">tags</div>
-                        <div class="footer_content footer_tags">
-                            <ul class="tags_list clearfix">
-                                <li class="tag_item"><a href="#">design</a></li>
-                                <li class="tag_item"><a href="#">fashion</a></li>
-                                <li class="tag_item"><a href="#">music</a></li>
-                                <li class="tag_item"><a href="#">video</a></li>
-                                <li class="tag_item"><a href="#">party</a></li>
-                                <li class="tag_item"><a href="#">photography</a></li>
-                                <li class="tag_item"><a href="#">adventure</a></li>
-                                <li class="tag_item"><a href="#">travel</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Footer Column -->
-                <div class="col-lg-3 footer_column">
-                    <div class="footer_col">
-                        <div class="footer_title">contact info</div>
-                        <div class="footer_content footer_contact">
-                            <ul class="contact_info_list">
-                                <li class="contact_info_item d-flex flex-row">
-                                    <div>
-                                        <div class="contact_info_icon"><img
-                                                src="<c:url value="/resources/home/images/placeholder.svg"/>" alt="">
-                                        </div>
-                                    </div>
-                                    <div class="contact_info_text">4127 Raoul Wallenber 45b-c Gibraltar</div>
-                                </li>
-                                <li class="contact_info_item d-flex flex-row">
-                                    <div>
-                                        <div class="contact_info_icon"><img
-                                                src="<c:url value="/resources/home/images/phone-call.svg"/>" alt="">
-                                        </div>
-                                    </div>
-                                    <div class="contact_info_text">2556-808-8613</div>
-                                </li>
-                                <li class="contact_info_item d-flex flex-row">
-                                    <div>
-                                        <div class="contact_info_icon"><img
-                                                src="<c:url value="/resources/home/images/message.svg"/>" alt=""></div>
-                                    </div>
-                                    <div class="contact_info_text"><a href="mailto:contactme@gmail.com?Subject=Hello"
-                                                                      target="_top">contactme@gmail.com</a></div>
-                                </li>
-                                <li class="contact_info_item d-flex flex-row">
-                                    <div>
-                                        <div class="contact_info_icon"><img
-                                                src="<c:url value="/resources/home/images/planet-earth.svg"/>" alt="">
-                                        </div>
-                                    </div>
-                                    <div class="contact_info_text"><a href="https://colorlib.com">www.colorlib.com</a>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
+    <jsp:include page="/WEB-INF/views/jsp/home_footer.jsp"/>
+</div>
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #fa9e1b">
+                <h5 class="modal-title" id="exampleModalLongTitle"
+                    style="margin-top: 10px; color: white; font-weight: bold; font-size: large">Thông tin đặt tour</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: navajowhite">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-        </div>
-    </footer>
-
-    <!-- Copyright -->
-
-    <div class="copyright">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3 order-lg-1 order-2  ">
-                    <div class="copyright_content d-flex flex-row align-items-center">
-                        <div><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                            Copyright &copy;<script>document.write(new Date().getFullYear());</script>
-                            All rights reserved | This template is made with <i class="fa fa-heart-o"
-                                                                                aria-hidden="true"></i> by <a
-                                    href="https://colorlib.com" target="_blank">Colorlib</a>
-                            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></div>
-                    </div>
-                </div>
-                <div class="col-lg-9 order-lg-2 order-1">
-                    <div class="footer_nav_container d-flex flex-row align-items-center justify-content-lg-end">
-                        <div class="footer_nav">
-                            <ul class="footer_nav_list">
-                                <li class="footer_nav_item"><a href="#">home</a></li>
-                                <li class="footer_nav_item"><a href="about.html">about us</a></li>
-                                <li class="footer_nav_item"><a href="offers.html">offers</a></li>
-                                <li class="footer_nav_item"><a href="blog.html">news</a></li>
-                                <li class="footer_nav_item"><a href="contact.html">contact</a></li>
-                            </ul>
+            <div class="modal-body">
+                <div class="row clearfix">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="body">
+                            <form>
+                                <center><textarea rows="3" cols="10"
+                                                  style="border: none; background-color: white; width: 100%; text-align: center; font-weight: bold; font-size: large"
+                                                  id="book_tourName" name="book_tourName" disabled="true"></textarea>
+                                </center><br/>
+                                <table border="0">
+                                    <tr>
+                                        <td colspan="2">
+                                            <label>Tên người đặt:</label> <input
+                                                style="border: none; background-color: white; width: 100%; margin-left: 10px"
+                                                type="text" id="book_name" name="book_name"
+                                                disabled="true"></input><br/><br/><br/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <label>Số điện thoại:</label> <input
+                                                style="border: none; background-color: white; width: 100%; margin-left: 10px"
+                                                type="text" id="book_phone" name="book_phone" disabled="true"></input><br/><br/><br/>
+                                        </td>
+                                        <td>
+                                            <label>Email:</label> <input
+                                                style="border: none; background-color: white; width: 100%; margin-left: 10px"
+                                                type="text" id="book_email" name="book_email" disabled="true"></input><br/><br/><br/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <label>Số người lớn đăng ký:</label> <input
+                                                style="border: none; background-color: white; width: 100%; margin-left: 10px"
+                                                type="text" id="book_numAdult" name="book_numAdult"
+                                                disabled="true"></input><br/><br/><br/>
+                                        </td>
+                                        <td>
+                                            <label>Số trẻ em đăng ký:</label> <input
+                                                style="border: none; background-color: white; width: 100%; margin-left: 10px"
+                                                type="text" id="book_numChild" name="book_numChild"
+                                                disabled="true"></input><br/><br/><br/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            <label>Ghi chú:</label> <textarea
+                                                style="border: none; background-color: white; width: 100%; margin-left: 10px"
+                                                id="book_notes" name="book_notes" disabled="true"></textarea><br/><br/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            <label>Tổng tiền:</label> <input
+                                                style="border: none; background-color: white; width: 100%; margin-left: 10px"
+                                                type="text" id="book_price" name="book_price" disabled="true"></input><br/><br/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </form>
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success">Thông tin tour</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>
+</div>
+
 </div>
 <script src="<c:url value="/resources/home/js/jquery-3.2.1.min.js"/>"></script>
 <script src="<c:url value="/resources/home/styles/bootstrap4/popper.js"/>"></script>
@@ -977,10 +390,7 @@
 <script src="<c:url value="/resources/home/plugins/OwlCarousel2-2.2.1/owl.carousel.js"/>"></script>
 <script src="<c:url value="/resources/home/plugins/easing/easing.js"/>"></script>
 <script src="<c:url value="/resources/home/js/custom.js"/>"></script>
-<%--<script src="<c:url value="https://unpkg.com/sweetalert/dist/sweetalert.min.js"/>"></script>--%>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-
-
 
 
 </body>
@@ -1021,6 +431,16 @@
         if (gender == 3) {
             gender_value.innerHTML = "Giới tính: Khác";
         }
+
+        var pay = document.getElementById("payStatus").value;
+        var payF = document.getElementById("payStatusF");
+
+        if (pay == 0) {
+            payF.innerHTML = "Chưa thanh toán";
+        }
+        if (pay == 1) {
+            payF.innerHTML = "Đã thanh toán";
+        }
     }
 
     function handleDelete(id) {
@@ -1050,5 +470,42 @@
                 )
             }
         });
+    }
+
+    function showBookTour(bookId) {
+        let book_tourName = $('#book_tourName');
+        let book_name = $('#book_name');
+        let book_phone = $('#book_phone');
+        let book_email = $('#book_email');
+        let book_numAdult = $('#book_numAdult');
+        let book_numChild = $('#book_numChild');
+        let book_note = $('#book_notes');
+        let book_price = $('#book_price');
+        $.ajax({
+            url: '/home/user_info/book/' + bookId,
+            type: 'GET',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            data: '',
+            success: function (data) {
+                setDataForInputText(book_tourName, data.tourName);
+                setDataForInputText(book_name, data.name);
+                setDataForInputText(book_phone, data.phone);
+                setDataForInputText(book_email, data.email);
+                setDataForInputText(book_numAdult, data.numAdult);
+                setDataForInputText(book_numChild, data.numChild);
+                setDataForInputText(book_note, data.notes);
+                setDataForInputText(book_price, (data.priceFormat).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + " vnđ");
+                $('#exampleModalCenter').modal('toggle');
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
+    }
+
+    function setDataForInputText(field, data) {
+        field.closest('div').addClass('focused');
+        field.val(data);
     }
 </script>

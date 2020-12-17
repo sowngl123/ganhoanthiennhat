@@ -63,12 +63,12 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                                         ${error}
                                 </span>
                             </c:if>
-                            <label>Tên tài khoản</label>
+                            <label>Số điện thoại</label>
                             <input type="text" Name="user_Name" required="">
                             <label>Mật khẩu</label>
                             <input type="password" Name="user_Password" required="">
                             <div class="send-button w3layouts agileits">
-                                <p><a href="#">Quên mật khẩu</a></p>
+                                <p><a href="/forgot-password1">Quên mật khẩu</a></p>
                                 <form>
                                     <input type="submit" value="ĐĂNG NHẬP">
                                 </form>

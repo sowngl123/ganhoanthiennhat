@@ -27,8 +27,10 @@ import javax.validation.Valid;
 import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
 
@@ -45,13 +47,22 @@ public class BookTourController {
     @Autowired
     UserService userService;
 
-    static int a,A,p,d;
+    static int a, A, p, d;
 
     @GetMapping("/book/{id}")
     public String showPageBookTour(@PathVariable Long id, HttpSession httpSession, ModelMap modelMap) {
         setUser(httpSession, modelMap);
         List<TourDto> tourDtos = tourService.findAllTours();
         TourDto tourDto = tourService.findOneTour(id);
+
+        Calendar c1 = Calendar.getInstance();
+        Calendar c2 = Calendar.getInstance();
+
+        c1.setTime(tourDto.getTour_Departureday());
+        c2.setTime(tourDto.getTour_Enddate());
+
+        long day = (c2.getTime().getTime() - c1.getTime().getTime()) / (24 * 3600 * 1000);
+        modelMap.addAttribute("tourDay", day);
         if (!modelMap.containsAttribute("bookTourDto")) {
             modelMap.addAttribute("bookTourDto", new BookTourDto());
         }
@@ -85,15 +96,13 @@ public class BookTourController {
             return "book";
         } else {
             setUser(httpSession, modelMap);
-            List<BookTourDto> dtos = bookTourService.findAll();
-            bookTourDto.setRegistration_Id((long) (dtos.size() + 1));
             bookTourDto.setTourId(id);
             bookTourDto.setStatus(0);
             bookTourDto.setPayStatus(0);
-            bookTourDto.setDateConfirm(null);
             LocalDate now = LocalDate.now();
             Timestamp timestamp = Timestamp.valueOf(now.atStartOfDay());
             bookTourDto.setCreateDate(timestamp);
+            bookTourDto.setDateConfirm(timestamp);
             bookTourDto.setNumAdult(Integer.parseInt(numAdult));
             bookTourDto.setNumChild(Integer.parseInt(numChild));
             bookTourDto.setPrice(Double.parseDouble(price));
@@ -103,53 +112,67 @@ public class BookTourController {
                 bookTourDto.setUserId(userID);
             } else {
                 List<UserDto> userDtos = userService.findAllUsers();
-                UserDto userDto1 = new UserDto();
-                userDto1.setUser_Id((long) (userDtos.size() + 1));
-                userDto1.setUser_Name("user" + (userDtos.size() + 1));
-                String s;
-                do {
-                    s = new String(new java.util.Random().ints(15, 33, 127)
-                            .toArray(),
-                            0, 15);
-                    a = A = d = p = 0;
-                    s.chars()
-                            .map(c ->
-                                    c > 96 & c < 123 ? a = 1
-                                            : c > 64 & c < 90 ? A = 1
-                                            : c > 47 & c < 58 ? d = 1
-                                            : (p = 1))
-                            .min();
-                } while (a + A + d + p < 4);
-                userDto1.setUser_Password(s);
-                userDto1.setUser_Role((int) 0);
-                userDto1.setUser_Fullname(bookTourDto.getName());
-                userDto1.setUser_Phone(bookTourDto.getPhone());
-                userDto1.setUser_Email(bookTourDto.getEmail());
-                userDto1.setUser_Createdate(Timestamp.valueOf(now.atStartOfDay()));
-                userDto1.setUser_Lastupdate(Timestamp.valueOf(LocalDateTime.now()));
-                userDto1.setUser_Gender(null);
-                File file = new File("C:\\Users\\Admin\\Desktop\\GhepCode\\Travel\\travel\\src\\main\\webapp\\resources\\home\\images\\avata.png");
-                byte[] picByte = new byte[(int) file.length()];
+                Long uId = Long.valueOf(-1);
+                for (UserDto userDto1 : userDtos) {
+                    if (bookTourDto.getEmail().equals(userDto1.getUser_Email()) || bookTourDto.getPhone().equals(userDto1.getUser_Phone())) {
+                        uId = userDto1.getUser_Id();
+                    }
+                }
+                if (uId == -1) {
+                    UserDto userDto1 = new UserDto();
+                    userDto1.setUser_Name(bookTourDto.getPhone());
+                    String s;
+                    do {
+                        s = new String(new java.util.Random().ints(15, 33, 127)
+                                .toArray(),
+                                0, 15);
+                        a = A = d = p = 0;
+                        s.chars()
+                                .map(c ->
+                                        c > 96 & c < 123 ? a = 1
+                                                : c > 64 & c < 90 ? A = 1
+                                                : c > 47 & c < 58 ? d = 1
+                                                : (p = 1))
+                                .min();
+                    } while (a + A + d + p < 4);
+                    userDto1.setUser_Password(s);
+                    userDto1.setUser_Role(0);
+                    userDto1.setUser_Fullname(bookTourDto.getName());
+                    userDto1.setUser_Phone(bookTourDto.getPhone());
+                    userDto1.setUser_Email(bookTourDto.getEmail());
+                    userDto1.setUser_Createdate(Timestamp.valueOf(now.atStartOfDay()));
+                    userDto1.setUser_Lastupdate(Timestamp.valueOf(LocalDateTime.now()));
+                    userDto1.setUser_Gender(null);
+                    userDto1.setUser_Status(1);
+                    File file = new File("E:/duantotnghiep/travel/src/main/webapp/resources/home/images/avatar.png");
+                    byte[] picByte = new byte[(int) file.length()];
+                    try {
+                        FileInputStream fileInputStream = new FileInputStream(file);
+                        fileInputStream.read(picByte);
+                        fileInputStream.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    userDto1.setImage(picByte);
+                    bookTourDto.setUserId(userDto1.getUser_Id());
+                    userService.saveUser(userDto1);
+                } else {
+                    bookTourDto.setUserId(uId);
+                }
+            }
+            List<BookTourDto> bookTourDtos = userService.findBookTourWaitByUserId(bookTourDto.getUserId());
+            if (bookTourDtos.isEmpty()) {
                 try {
-                    FileInputStream fileInputStream = new FileInputStream(file);
-                    fileInputStream.read(picByte);
-                    fileInputStream.close();
+                    bookTourService.save(bookTourDto);
+                    sendMail(bookTourDto, tourDto);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                userDto1.setImage(picByte);
-                bookTourDto.setUserId(userDto1.getUser_Id());
-                userService.saveUser(userDto1);
-            }
 
-            try {
-                bookTourService.save(bookTourDto);
-                sendMail(bookTourDto, tourDto);
-            } catch (Exception e) {
-                e.printStackTrace();
+                return "success";
+            } else {
+                return "denied";
             }
-
-            return "/success";
         }
     }
 

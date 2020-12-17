@@ -3,6 +3,8 @@ package vn.nuce.mapper;
 import vn.nuce.dto.BookTourDto;
 import vn.nuce.entity.BookTourEntity;
 
+import java.time.format.DateTimeFormatter;
+
 public class BookTourMapper {
 
     public static BookTourDto toBookTourDto(BookTourEntity bookTourEntity) {
@@ -15,13 +17,16 @@ public class BookTourMapper {
         bookTourDto.setPhone(bookTourEntity.getPhone());
         bookTourDto.setEmail(bookTourEntity.getEmail());
         bookTourDto.setPrice(bookTourEntity.getPrice());
-        bookTourDto.setNote(bookTourEntity.getNote());
+        bookTourDto.setNotes(bookTourEntity.getNote());
         bookTourDto.setNumChild(bookTourEntity.getNumChild());
         bookTourDto.setNumAdult(bookTourEntity.getNumAdult());
         bookTourDto.setStatus(bookTourEntity.getStatus());
         bookTourDto.setCreateDate(bookTourEntity.getCreateDate());
         bookTourDto.setDateConfirm(bookTourEntity.getDateConfirm());
         bookTourDto.setPayStatus(bookTourEntity.getPayStatus());
+        bookTourDto.setPayment(bookTourEntity.getPayment());
+        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        bookTourDto.setCreateDateFormat(bookTourEntity.getCreateDate().toLocalDateTime().toLocalDate().format(formatters));
 
         return bookTourDto;
     }
@@ -36,13 +41,14 @@ public class BookTourMapper {
         bookTourEntity.setPhone(bookTourDto.getPhone());
         bookTourEntity.setEmail(bookTourDto.getEmail());
         bookTourEntity.setPrice(bookTourDto.getPrice());
-        bookTourEntity.setNote(bookTourDto.getNote());
+        bookTourEntity.setNote(bookTourDto.getNotes());
         bookTourEntity.setNumChild(bookTourDto.getNumChild());
         bookTourEntity.setNumAdult(bookTourDto.getNumAdult());
         bookTourEntity.setStatus(bookTourDto.getStatus());
         bookTourEntity.setCreateDate(bookTourDto.getCreateDate());
         bookTourEntity.setDateConfirm(bookTourDto.getDateConfirm());
         bookTourEntity.setPayStatus(bookTourDto.getPayStatus());
+        bookTourEntity.setPayment(bookTourDto.getPayment());
 
         return bookTourEntity;
     }
