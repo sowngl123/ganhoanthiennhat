@@ -1,27 +1,69 @@
 package vn.nuce.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import vn.nuce.dto.BookTourDto;
-import vn.nuce.dto.TourDto;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import vn.nuce.dto.UserDto;
+import vn.nuce.service.UserService;
 
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 
 @Controller
 public class ForgotPasswordController {
 
+    @Autowired
+    private UserService userService;
+
+    private UserDto userDto;
+
     @GetMapping("/forgot-password1")
-    public String showForgotPassword(ModelMap modelMap) {
+    public String showForgotPassword() {
         return "forgot-password1";
     }
 
-    private void sendMail(BookTourDto bookTourDto, TourDto tourDto) {
+    @PostMapping("/forgot-password1")
+    public String getEmailAndCode(@RequestParam(name = "text") String text) {
+        List<UserDto> userDtos = userService.findAllUsers();
+        for (UserDto userDto1 : userDtos) {
+            if (userDto1.getUser_Email().equalsIgnoreCase(text)) {
+                userDto = userDto1;
+            }
+        }
+        sendMail(userDto);
+
+        return "forgot-password2";
+    }
+
+    @GetMapping("/forgot-password3")
+    public String showConfirmCode() {
+        return "forgot-password3";
+    }
+
+    @PostMapping("/forgot-password3")
+    public String setPassword(@RequestParam(name = "password") String pass) {
+        userDto.setUser_Password(pass);
+        userService.updateUser(userDto);
+
+        return "forgot-password4";
+    }
+
+    @GetMapping("/forgot-password4")
+    public String showwwww() {
+        return "forgot-password4";
+    }
+
+    private void sendMail(UserDto userDto) {
         try {
             Properties mailServerProperties;
             Session getMailSession;
@@ -35,9 +77,9 @@ public class ForgotPasswordController {
             getMailSession = Session.getDefaultInstance(mailServerProperties, null);
             mailMessage = new MimeMessage(getMailSession);
 
-            mailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(bookTourDto.getEmail()));
+            mailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(userDto.getUser_Email()));
 
-            mailMessage.setSubject("Xác nhận đặt tour", "UTF-8");
+            mailMessage.setSubject("Quên mật khẩu", "UTF-8");
             String emailBody = "<!DOCTYPE html>\n" +
                     "<html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\"\n" +
                     "\txmlns:o=\"urn:schemas-microsoft-com:office:office\">\n" +
@@ -380,7 +422,7 @@ public class ForgotPasswordController {
                     "\t\t\t\t\t\t\t\t\t<h1>\n" +
                     "\t\t\t\t\t\t\t\t\t\t<a href=\"#\" style=\"color: white;\">\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t<img src=\"https://scontent.xx.fbcdn.net/v/t1.15752-9/cp0/51562127_2068243553258139_4328069734231703552_n.png?_nc_cat=111&ccb=2&_nc_sid=ae9488&_nc_ohc=lyHiF0yyP0UAX9rRge8&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=9d52e8e2bd1e55cd279d191c5a14fd26&oe=5FBE7069\"\n" +
-                    "\t\t\t\t\t\t\t\t\t\t\t\talt=\"\">TRAVELIX\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t\talt=\"\">POLYTRAVEL\n" +
                     "\t\t\t\t\t\t\t\t\t\t</a>\n" +
                     "\t\t\t\t\t\t\t\t\t</h1>\n" +
                     "\t\t\t\t\t\t\t\t</td>\n" +
@@ -394,44 +436,20 @@ public class ForgotPasswordController {
                     "\t\t\t\t\t\t\t<tr>\n" +
                     "\t\t\t\t\t\t\t\t<td style=\"padding: 0 2.5em; text-align: left;\">\n" +
                     "\t\t\t\t\t\t\t\t\t<div class=\"text\">\n" +
-                    "\t\t\t\t\t\t\t\t\t\t<h2>Cảm ơn quý khách đã đặt tour của công ty Travelix</h2>\n" +
-                    "\t\t\t\t\t\t\t\t\t\t<h4>Chúng tôi rất vui thông báo tour #00" + bookTourDto.getRegistration_Id() + " của quý khách đã được tiếp nhận và\n" +
-                    "\t\t\t\t\t\t\t\t\t\t\tđang trong quá trình xử lý. Chúng tôi sẽ liên lạc sớm nhất với quý khách.\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<h2>Xác nhận quên mật khẩu</h2>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<h4>Xin chào " + userDto.getUser_Fullname() + ",\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t\n" +
+                    "\t\t\t\t\t\t\t\t\t\t</h4>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<h4>Hãy bấm vào nút bên dưới để có thể đặt mật khẩu mới cho tài khoản của bạn<br/>\n" +
                     "\t\t\t\t\t\t\t\t\t\t</h4>\n" +
                     "\t\t\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t\t\t\t<center><p><a href=\"http://localhost:8080/forgot-password3\" class=\"btn btn-primary\">Đặt mật khẩu mới</a></p></center>\t\t\t\t\t\t\t\t\t\n" +
                     "\t\t\t\t\t\t\t\t</td>\n" +
+                    "\n" +
+                    "\t\t\t\t\t\t\t\t\t\n" +
                     "\t\t\t\t\t\t\t</tr>\n" +
                     "\t\t\t\t\t\t</table>\n" +
                     "\t\t\t\t\t</td>\n" +
-                    "\t\t\t\t</tr>\n" +
-                    "\t\t\t\t<tr>\n" +
-                    "\t\t\t\t\t<table class=\"bg_white\" role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n" +
-                    "\t\t\t\t\t\t<tr style=\"border-bottom: 1px solid rgba(0,0,0,.05);\">\n" +
-                    "\t\t\t\t\t\t\t<th width=\"80%\"\n" +
-                    "\t\t\t\t\t\t\t\tstyle=\"text-align:left; padding: 0 2.5em; color: #000; padding-bottom: 20px\">Tour</th>\n" +
-                    "\t\t\t\t\t\t\t<th width=\"20%\"\n" +
-                    "\t\t\t\t\t\t\t\tstyle=\"text-align:right; padding: 0 2.5em; color: #000; padding-bottom: 20px\">Giá</th>\n" +
-                    "\t\t\t\t\t\t</tr>\n" +
-                    "\t\t\t\t\t\t<tr style=\"border-bottom: 1px solid rgba(0,0,0,.05);\">\n" +
-                    "\t\t\t\t\t\t\t<td valign=\"middle\" width=\"80%\" style=\"text-align:left; padding: 0 2.5em;\">\n" +
-                    "\t\t\t\t\t\t\t\t<div class=\"product-entry\">\n" +
-                    "\t\t\t\t\t\t\t\t\t<img src=\"https://vyctravel.com/libs/upload/ckfinder/images/H_A/VN/10diem3.jpg\" alt=\"\"\n" +
-                    "\t\t\t\t\t\t\t\t\t\tstyle=\"width: 100px; max-width: 600px; height: auto; margin-bottom: 20px; display: block;\">\n" +
-                    "\t\t\t\t\t\t\t\t\t<div class=\"text\">\n" +
-                    "\t\t\t\t\t\t\t\t\t\t<h3>" + tourDto.getTour_Name() + "</h3>\n" +
-                    "\t\t\t\t\t\t\t\t\t</div>\n" +
-                    "\t\t\t\t\t\t\t\t</div>\n" +
-                    "\t\t\t\t\t\t\t</td>\n" +
-                    "\t\t\t\t\t\t\t<td valign=\"middle\" width=\"20%\" style=\"text-align:left;\">\n" +
-                    "\t\t\t\t\t\t\t\t<span class=\"price\" style=\"color: #000; font-size: 18px;\">" + bookTourDto.getPrice() + "vnđ</span>\n" +
-                    "\t\t\t\t\t\t\t</td>\n" +
-                    "\t\t\t\t\t\t</tr>\n" +
-                    "\t\t\t\t\t\t<tr>\n" +
-                    "\t\t\t\t\t\t\t<td valign=\"middle\" style=\"text-align:left; padding: 1em 2.5em;\">\n" +
-                    "\t\t\t\t\t\t\t\t<p><a href=\"http://localhost:8080/\" class=\"btn btn-primary\">Tiếp tục lựa chọn tour</a></p>\n" +
-                    "\t\t\t\t\t\t\t</td>\n" +
-                    "\t\t\t\t\t\t</tr>\n" +
-                    "\t\t\t\t\t</table>\n" +
                     "\t\t\t\t</tr>\n" +
                     "\t\t\t</table>\n" +
                     "\t\t\t<table align=\"center\" role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"100%\"\n" +
@@ -444,12 +462,12 @@ public class ForgotPasswordController {
                     "\t\t\t\t\t\t\t\t\t<table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"100%\">\n" +
                     "\t\t\t\t\t\t\t\t\t\t<tr>\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t<td style=\"text-align: left; padding-left: 5px; padding-right: 5px;\">\n" +
-                    "\t\t\t\t\t\t\t\t\t\t\t\t<h3 class=\"heading\">Contact Info</h3>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t\t<h3 class=\"heading\">Thông tin liên hệ</h3>\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t\t<ul>\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t<li><span class=\"text\">Tòa nhà FPT Polytechnic, Phố Trịnh Văn Bô,\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tNam Từ Liêm, Hà Nội</span></li>\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t<li><span class=\"text\">Điện thoại: (024) 7300 1955</span></a></li>\n" +
-                    "\t\t\t\t\t\t\t\t\t\t\t\t\t<li><span class=\"text\">Email: travelixpoly@gmail.com</span></a></li>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t<li><span class=\"text\">Email: travelix@gmail.com</span></a></li>\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t\t</ul>\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t</td>\n" +
                     "\t\t\t\t\t\t\t\t\t\t</tr>\n" +
