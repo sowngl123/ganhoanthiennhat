@@ -110,7 +110,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
         var pass = document.getElementById("pass").value;
         var rePass = document.getElementById("rePass").value;
 
-        if (pass == rePass) {
+        if (pass != rePass) {
             document.getElementById("submit").disabled = false;
             document.getElementById("error1").style.display = "block";
         }

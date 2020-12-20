@@ -55,26 +55,41 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                 <a class="hiddenanchor w3layouts agileits" id="tologin"></a>
                 <a class="hiddenanchor w3layouts agileits" id="toregister"></a>
                 <div id="wrapper">
-                    <div id="register" class="animate w3layouts agileits form">
+                    <div id="register" class="animate w3layouts agileits form" style="height: 472px;">
                         <h2>Đăng ký</h2>
                         <form  action="#" autocomplete="on" method="post">
                             <form method="post">
                                 <label>E-mail</label>
-
-                                <input type="text" Name="user_Email" required="">
+                                <input type="text" Name="user_Email" required="" id="email" oninput="validateEmail()">
+                                <p style="color: red;display: none" id="errorEmailBlank">Không được để trống email</p>
+                                <p style="color: red;display: none" id="errorEmailConvert">Không đúng định dạng email</p>
+                                <p style="color: red;display: none" id="errorEmailUnique">Email đã được đăng ký cho tài khoản khác</p>
                                 <label>Số điện thoại</label>
-                                <input type="text" class="name w3layouts agileits" Name="user_Name" required="">
+                                <input type="text" class="name w3layouts agileits" Name="user_Name" required="" id="phone" oninput="validatePhone()">
+                                <p style="color: red;display: none" id="errorPhoneBlank">Không được để trống số điện thoại</p>
+                                <p style="color: red;display: none" id="errorPhoneConvert">Không đúng định dạng số điện thoại</p>
+                                <p style="color: red;display: none" id="errorPhoneUnique">Số điện thoại đã được đăng ký cho tài khoản khác</p>
                                 <label>Mật khẩu</label>
-                                <input type="password" Name="user_Password" required="">
+                                <input type="password" Name="user_Password" required="" id="pass" oninput="validatePass()">
+                                <p style="color: red;display: none" id="errorPassBlank">Không được để trống mật khẩu</p>
                                 <label>Nhập lại mật khẩu</label>
-                                <input type="password" Name="REuser_Password" required="">
-                                <input hidden type="text" Name="user_Status" value="0" >
+                                <input type="password" Name="REuser_Password" required="" id="rePass" oninput="validateRePass()">
+                                <p style="color: red;display: none" id="errorRePassBlank">Không được để trống nhập lại mật khẩu</p>
+                                <p style="color: red;display: none" id="errorRePassEqual">Không đúng mật khẩu</p>
+                                <input hidden type="text" Name="user_Status" value="1" >
                                 <input hidden type="text" Name="user_Role" value="0" >
+                                <input hidden type="text" Name="user_Gender" value="0" >
                                 <div class="send-button w3layouts agileits">
                                     <form action="#" method="post">
-                                        <input type="submit" value="Đăng ký">
+                                        <input type="submit" value="Đăng ký" id="submit" disabled="true">
                                     </form>
                                 </div>
+                                <c:forEach var="list" items="${listEmail}">
+                                    <input type="hidden" name="arrayE[]" value="${list}"/>
+                                </c:forEach>
+                                <c:forEach var="list" items="${listPhone}">
+                                    <input type="hidden" name="arrayP[]" value="${list}"/>
+                                </c:forEach>
                             </form>
                             <p class="change_link w3layouts agileits">
                                 Bạn đã có tài khoản? <a href="login" class="to_register">Đăng nhập</a>
@@ -97,5 +112,110 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 
 </body>
 <!-- //Body -->
+<script>
+    function validateEmail() {
+        var email = document.getElementById("email").value;
+        const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+        var aa = document.getElementsByName("arrayE[]");
+        var kt = false;
 
+        if (email.length == 0) {
+            document.getElementById("errorEmailBlank").style.display = "block";
+            document.getElementById("submit").disabled = true;
+        }
+        else {
+            document.getElementById("errorEmailBlank").style.display = "none";
+            if (re.test(String(email)) == false) {
+                document.getElementById("errorEmailConvert").style.display = "block";
+                document.getElementById("submit").disables = true;
+            }
+            else {
+                document.getElementById("errorEmailConvert").style.display = "none";
+                for (var i = 0; i < aa.length; i++) {
+                    var a = aa[i];
+                    if (!(String(email)).localeCompare(String(a.value))) {
+                        kt = true;
+                    }
+                }
+                if (kt == true) {
+                    document.getElementById("submit").disabled = true;
+                    document.getElementById("errorEmailUnique").style.display = "block";
+                }
+                else {
+                    document.getElementById("submit").disabled = false;
+                    document.getElementById("errorEmailUnique").style.display = "none";
+                }
+            }
+        }
+    }
+
+    function validatePhone() {
+        var phone = document.getElementById("phone").value;
+        const re = /((09|03|07|08|05)+([0-9]{8})\b)/g;
+        var aa = document.getElementsByName("arrayP[]");
+        var kt = false;
+
+        if (phone.length == 0) {
+            document.getElementById("errorPhoneBlank").style.display = "block";
+            document.getElementById("submit").disabled = true;
+        }
+        else {
+            document.getElementById("errorPhoneBlank").style.display = "none";
+            if (re.test(String(phone)) == false) {
+                document.getElementById("errorPhoneConvert").style.display = "block";
+                document.getElementById("submit").disables = true;
+            }
+            else {
+                document.getElementById("errorPhoneConvert").style.display = "none";
+                for (var i = 0; i < aa.length; i++) {
+                    var a = aa[i];
+                    if (!(String(phone)).localeCompare(String(a.value))) {
+                        kt = true;
+                    }
+                }
+                if (kt == true) {
+                    document.getElementById("submit").disabled = true;
+                    document.getElementById("errorPhoneUnique").style.display = "block";
+                }
+                else {
+                    document.getElementById("submit").disabled = false;
+                    document.getElementById("errorPhoneUnique").style.display = "none";
+                }
+            }
+        }
+    }
+    
+    function validatePass() {
+        var pass = document.getElementById("pass").value;
+        if (pass.length == 0) {
+            document.getElementById("errorPassBlank").style.display = "block";
+            document.getElementById("submit").disabled = true;
+        }
+        else {
+            document.getElementById("errorPassBlank").style.display = "none";
+            document.getElementById("submit").disabled = false;
+        }
+    }
+
+    function validateRePass() {
+        var pass = document.getElementById("pass").value;
+        var rePass = document.getElementById("rePass").value;
+
+        if (rePass.length == 0) {
+            document.getElementById("errorRePassBlank").style.display = "block";
+            document.getElementById("submit").disabled = true;
+        }
+        else {
+            document.getElementById("errorPassBlank").style.display = "none";
+            if (pass != rePass) {
+                document.getElementById("errorRePassEqual").style.display = "block";
+                document.getElementById("submit").disabled = true;
+            }
+            else {
+                document.getElementById("errorRePassEqual").style.display = "none";
+                document.getElementById("submit").disabled = false;
+            }
+        }
+    }
+</script>
 </html>
