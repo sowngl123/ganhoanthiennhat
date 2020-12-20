@@ -158,6 +158,14 @@ public class BookTourController {
                     userDto1.setImage(picByte);
                     bookTourDto.setUserId(userDto1.getUser_Id());
                     userService.saveUser(userDto1);
+                    List<UserDto> userDtos1 = userService.findAllUsers();
+                    Long i = Long.valueOf(0);
+                    for (UserDto userDto2 : userDtos1) {
+                        if (userDto2.getUser_Email().equals(bookTourDto.getEmail())) {
+                            i = userDto2.getUser_Id();
+                        }
+                    }
+                    bookTourDto.setUserId(i);
                     sendMailNewUser(bookTourDto, tourDto, s);
                 } else {
                     bookTourDto.setUserId(uId);

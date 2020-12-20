@@ -15,6 +15,7 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -28,7 +29,14 @@ public class ForgotPasswordController {
     private UserDto userDto;
 
     @GetMapping("/forgot-password1")
-    public String showForgotPassword() {
+    public String showForgotPassword(ModelMap modelMap) {
+        List<UserDto> userDtos = userService.findAllUsers();
+        List<String> emails = new ArrayList<>();
+        for (UserDto userDto1 : userDtos) {
+            emails.add(userDto1.getUser_Email());
+        }
+        modelMap.addAttribute("listEmail", emails);
+
         return "forgot-password1";
     }
 
@@ -46,7 +54,9 @@ public class ForgotPasswordController {
     }
 
     @GetMapping("/forgot-password3")
-    public String showConfirmCode() {
+    public String showChangePass(ModelMap modelMap) {
+        modelMap.addAttribute("password", userDto.getUser_Password());
+
         return "forgot-password3";
     }
 
@@ -55,11 +65,6 @@ public class ForgotPasswordController {
         userDto.setUser_Password(pass);
         userService.updateUser(userDto);
 
-        return "forgot-password4";
-    }
-
-    @GetMapping("/forgot-password4")
-    public String showwwww() {
         return "forgot-password4";
     }
 

@@ -66,9 +66,15 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                         <h2>Quên mật khẩu</h2>
                         <form method="POST" autocomplete="on">
                             <label>Vui lòng nhập email để chúng tôi có thể gửi link đổi mật khẩu cho bạn.</label>
-                            <input type="text" name="text" required="">
+                            <input type="text" name="text" required="" id="text" oninput="validate()">
+                            <p style="color: red; display: none" id="errorBlank">Không được để trống email</p>
+                            <p style="color: red; display: none" id="errorConvert">Không đúng định dạng email</p>
+                            <p style="color: red; display: none" id="errorNullable">Email không liên kết với tài khoản nào</p>
+                            <c:forEach var="list" items="${listEmail}">
+                                <input type="hidden" name="arrayE[]" value="${list}"/>
+                            </c:forEach>
                             <div class="send-button w3layouts agileits">
-                                    <input type="submit" value="Xác nhận">
+                                    <input type="submit" value="Xác nhận" id="submit" disabled="true">
                             </div>
 
                             <p class="change_link w3layouts agileits">
@@ -92,5 +98,40 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 
 </body>
 <!-- //Body -->
-
+<script>
+    function validate() {
+        var text = document.getElementById("text").value;
+        const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+        var aa = document.getElementsByName("arrayE[]");
+        var kt = false;
+        if (text.length == 0) {
+            document.getElementById("submit").disabled = true;
+            document.getElementById("errorBlank").style.display = "block";
+        }
+        else {
+            document.getElementById("errorBlank").style.display = "none";
+            if (re.test(String(text).toLowerCase()) == false) {
+                document.getElementById("submit").disabled = true;
+                document.getElementById("errorConvert").style.display = "block";
+            }
+            else {
+                document.getElementById("errorConvert").style.display = "none";
+                for (var i = 0; i < aa.length; i++) {
+                    var a = aa[i];
+                    if (!(String(text)).localeCompare(String(a.value))) {
+                        kt = true;
+                    }
+                }
+                if (kt == true) {
+                    document.getElementById("submit").disabled = false;
+                    document.getElementById("errorNullable").style.display = "none";
+                }
+                else {
+                    document.getElementById("submit").disabled = true;
+                    document.getElementById("errorNullable").style.display = "block";
+                }
+            }
+        }
+    }
+</script>
 </html>

@@ -66,11 +66,14 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                         <h2>Đặt lại mật khẩu</h2>
                         <form method="POST" autocomplete="on">
                             <label>Mật khẩu:</label>
-                            <input type="password" name="password" required="">
+                            <input type="password" name="password" required="" id="pass" oninput="check1()">
+                            <p style="color: red; display: none" id="error2">Mật khẩu này bạn đã sử dụng, hãy thử mật khẩu khác</p>
                             <label>Nhập lại mật khẩu:</label>
-                            <input type="password" name="repassword" required="">
+                            <input type="password" name="repassword" required="" id="rePass" oninput="check2()">
+                            <p style="color: red; display: none" id="error1">Không đúng mật khẩu</p>
+                            <input type="hidden" id="password" value="${password}">
                             <div class="send-button w3layouts agileits">
-                                <input type="submit" value="Xác nhận">
+                                <input type="submit" value="Xác nhận" id="submit" disabled="true">
                             </div>
                             <div class="clear"></div>
                         </form>
@@ -90,5 +93,31 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 
 </body>
 <!-- //Body -->
+<script>
+    function check1() {
+        var pass = document.getElementById("pass").value;
+        var password = document.getElementById("password").value;
+        if (pass == password) {
+            document.getElementById("submit").disabled = false;
+            document.getElementById("error2").style.display = "block";
+        }
+        else {
+            document.getElementById("error2").style.display = "none";
+        }
+    }
 
+    function check2() {
+        var pass = document.getElementById("pass").value;
+        var rePass = document.getElementById("rePass").value;
+
+        if (pass == rePass) {
+            document.getElementById("submit").disabled = false;
+            document.getElementById("error1").style.display = "block";
+        }
+        else {
+            document.getElementById("submit").disabled = true;
+            document.getElementById("error1").style.display = "none";
+        }
+    }
+</script>
 </html>
