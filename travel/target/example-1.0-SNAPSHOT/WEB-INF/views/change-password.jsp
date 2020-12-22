@@ -178,7 +178,9 @@
                                         <label>
                                             <h4>Mật khẩu mới:</h4>
                                         </label>
-                                        <input type="password" class="form-control" name="newPass" id="new-pass"><br/>
+                                        <input type="password" class="form-control" name="newPass" id="new-pass" oninput="checkPass1()"><br/>
+                                        <p style="color: red; display: none" id="errorInUse">Mật khẩu này bạn đang sử dụng</p>
+                                        <p style="color: red; display: none" id="errorLength">Mật khẩu phải có 6 ký tự trở lên</p>
                                     </div>
                                 </div>
 
@@ -263,6 +265,23 @@
         }
         else {
             document.getElementById("error-pass").style.display = "none";
+        }
+    }
+
+    function checkPass1() {
+        var pass = document.getElementById("user-password").value;
+        var newPass = document.getElementById("new-pass").value;
+        if (newPass.length < 6) {
+            document.getElementById("errorLength").style.display = "block";
+        }
+        else {
+            document.getElementById("errorLength").style.display = "none";
+            if (newPass == pass) {
+                document.getElementById("errorInUse").style.display = "block";
+            }
+            else {
+                document.getElementById("errorInUse").style.display = "none";
+            }
         }
     }
 

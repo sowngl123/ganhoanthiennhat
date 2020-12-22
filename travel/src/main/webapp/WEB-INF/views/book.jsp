@@ -52,6 +52,7 @@
             if (va <= 0) {
                 document.getElementById("nguoilon").value = 1;
                 document.getElementById("nguoilon-value").value = values;
+                document.getElementById("nguoilon-valueV").innerHTML = document.getElementById("nguoilon-value").value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
             }
         }
         function requiredNumber2() {
@@ -59,6 +60,7 @@
             if (va < 0) {
                 document.getElementById("treem").value = 0;
                 document.getElementById("treem-value").value = 0;
+                document.getElementById("treem-valueV").innerHTML = document.getElementById("treem-value").value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
             }
         }
         function addNguoiLon() {
@@ -66,13 +68,15 @@
             var values = document.getElementById("nguoilon-value");
             var price = document.getElementById("tour_price").value;
             values.value = count * price;
+            document.getElementById("nguoilon-valueV").innerHTML = values.value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
             tinhtong();
         }
         function addTreEm() {
             var count = document.getElementById("treem").value;
             var values = document.getElementById("treem-value");
             var price = document.getElementById("tour_price").value;
-            values.value = count * ((price * 30) / 100);
+            values.value = count * ((price * 70) / 100);
+            document.getElementById("treem-valueV").innerHTML = values.value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
             tinhtong();
         }
         function tinhtong() {
@@ -82,6 +86,7 @@
             var nguoiLon = document.getElementById("nguoilon-value").value;
             var treEm = document.getElementById("treem-value").value;
             sum.value = Number(nguoiLon) + Number(treEm);
+            document.getElementById("tongtienV").innerHTML = sum.value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         }
     </script>
     <style>
@@ -171,6 +176,10 @@
             /* background: linear-gradient(to right, #8d4fff, #fa9e1b); */
             -webkit-box-shadow: 0px 0px 0 0 #8d4fff inset, 0px 0px 0 #8d4fff inset;
         }
+
+        .submits[disabled], submits:disabled {
+            background-color: grey;
+        }
         #add {
             width: 30%;
             float: left;
@@ -257,7 +266,7 @@
                         <td style="text-align: right"><p style="color: black;">${tour.tour_Departurelocation}</p></td>
                     </tr>
                     <tr>
-                        <td style="font-weight: bold">Giá:</td>
+                        <td style="font-weight: bold">Giá (đã bao gồm VAT):</td>
                         <td style="text-align: right">
                             <input type="hidden" value="${tour.tour_Price}" id="tourPrice">
                             <p id="tourPriceF" onload="load()" style="color: black"></p>
@@ -270,6 +279,10 @@
                             <p id="tourVehicleF" style="color: black"></p>
                         </td>
                     </tr>
+                    <tr>
+                        <td style="font-weight: bold">Số chỗ còn:</td>
+                        <td style="text-align: right"><p style="color: black;">${tour.tour_Max} người</p></td>
+                    </tr>
                 </table>
 
                 <br/>
@@ -280,49 +293,53 @@
                     <tr>
                         <th></th>
                         <th>Số lượng</th>
-                        <th>Giá</th>
+                        <th>Số tiền</th>
                     </tr>
                     <tr>
                         <td>Người lớn (9 tuổi trở lên)</td>
                         <td><input class="numbers" id="nguoilon" type="number" name="numAdult"
                                    onchange="addNguoiLon(), requiredNumber1(), loadNumber1()" value="1"/></td>
                         <td>
-                            <input type="text" id="nguoilon-value"
+                            <input type="hidden" id="nguoilon-value"
                                    style="border: none; width: 75%; background-color: white; text-align: right" readonly
                                    value="${tour.tour_Price}">
+                            <p id="nguoilon-valueV" style="color: black"></p>
                         </td>
                     </tr>
                     <tr>
-                        <td>Trẻ em (6 đến 8 tuổi)</td>
+                        <td>Trẻ em (5 - 8 tuổi)</td>
                         <td><input class="numbers" id="treem" type="number" name="numChild"
                                    onchange="addTreEm(), requiredNumber2(), loadNumber2()" value="0"/></td>
                         <td>
-                            <input type="text" id="treem-value"
+                            <input type="hidden" id="treem-value"
                                    style="border: none; width: 75%; background-color: white; text-align: right" readonly
                                    value="0">
+                            <p id="treem-valueV" style="color: black"></p>
                         </td>
                     </tr>
-                        <%--                    <tr>--%>
-                        <%--                        <td>Trẻ sơ sinh</td>--%>
-                        <%--                        <td><input class="numbers" type="number" name="numBaby"--%>
-                        <%--                                   value="0"/></td>--%>
-                        <%--                        <td>--%>
-                        <%--                            <input type="text" style="border: none; width: 75%; background-color: white; text-align: right" readonly--%>
-                        <%--                                   value="0">--%>
-                        <%--                        </td>--%>
-                        <%--                    </tr>--%>
+<%--                    <tr>--%>
+<%--                        <td>Trẻ sơ sinh</td>--%>
+<%--                        <td><input class="numbers" type="number" name="numBaby"--%>
+<%--                                   value="0"/></td>--%>
+<%--                        <td>--%>
+<%--                            <input type="text"--%>
+<%--                                   style="border: none; width: 75%; background-color: white; text-align: right" readonly--%>
+<%--                                   value="0">--%>
+<%--                        </td>--%>
+<%--                    </tr>--%>
                     <tr>
                         <td colspan="2">
-                            <p>Tổng tiền:</p>
+                            <p style="color: black">Tổng tiền (đã bao gồm VAT):</p>
                         </td>
                         <td>
-                            <input type="text" id="tongtien" name="price"
+                            <input type="hidden" id="tongtien" name="price"
                                    style="border: none; width: 75%; background-color: white; text-align: right"
                                    readonly="true" value="${tour.tour_Price}"/>
+                            <p id="tongtienV" style="color: black"></p>
                         </td>
                     </tr>
                 </table>
-                <p style="float: right;">Đơn vị tiền tệ: VND</p>
+                <p style="float: right;">Đơn vị tiền tệ: VNĐ</p>
             </div>
 
             <div class="dangky">
@@ -374,34 +391,30 @@
                             <div id="payCK" style="display: block">
                                 <p style="color: black; margin: 10px">THÔNG TIN THANH TOÁN CHUYỂN KHOẢN</p>
 
-                                <p style="color: black; margin: 10px"> - Ngân hàng TMCP Ngoại Thương Việt Nam - CN TP.HN
-                                    (VCB)</p>
+                                <p style="color: black; margin: 10px"> - Ngân hàng Đầu tư và Phát triển Việt Nam</p>
 
                                 <p style="color: black; margin: 10px"> - Tên đơn vị hưởng: CÔNG TY CỔ PHẦN DỊCH VỤ DU
                                     LỊCH POLYTRAVEL</p>
 
-                                <p style="color: black; margin: 10px"> - Số tài khoản VNĐ: 007.‎‎1001204617</p>
+                                <p style="color: black; margin: 10px"> - Số tài khoản: 21710000423369</p>
 
-                                <p style="color: black; margin: 10px"> - Tại Ngân Hàng VCB - CN TP.HN</p>
+                                <p style="color: black; margin: 10px"> - Tại Ngân hàng BIDV - CN TP.HN</p>
                             </div>
                             <br/>
                             <input type="radio" id="female" name="gender" value="female" onclick="clickTM()">
                             <label for="female">Thanh toán tại văn phòng</label><br>
                             <div id="payTM" style="display: none">
-                                <p style="color: black; margin: 10px">CÔNG TY CỔ PHẦN DỊCH VỤ DU LỊCH BẾN THÀNH</p>
+                                <p style="color: black; margin: 10px">CÔNG TY CỔ PHẦN DỊCH VỤ DU LỊCH POLYTRAVEL</p>
 
-                                <p style="color: black; margin: 10px">(BENTHANH TOURIST)</p>
+                                <p style="color: black; margin: 10px">Trụ sở: Tòa nhà FPT Polytechnic, Phố Trịnh Văn Bô, Nam Từ Liêm, Hà Nội</p>
 
-                                <p style="color: black; margin: 10px">Trụ sở: 82-84 Calmette, P.Nguyễn Thái Bình, Quận
-                                    1, Tp.Hồ Chí Minh</p>
-
-                                <p style="color: black; margin: 10px">Điện thoại: 028.38227788</p>
+                                <p style="color: black; margin: 10px">Điện thoại: (024) 7300 1955</p>
 
                                 <p style="color: black; margin: 10px">Tổng đài: 1900 6668</p>
 
                                 <p style="color: black; margin: 10px">Fax: 028.3829 5060</p>
 
-                                <p style="color: black; margin: 10px">Email: benthanh@benthanhtourist.com</p>
+                                <p style="color: black; margin: 10px">Email: polytravel188@gmail.com</p>
                             </div>
                             <br/>
                             <form:input type="hidden" id="bookTourPayment" path="payment" value="0"/>
@@ -410,8 +423,14 @@
                 </table>
             </div>
         </div>
+        <br/>
         <center>
-            <button class="submits" type="submit">Đặt tour</button>
+            <hr style="width: 85%; border: 1px solid #fa9e1b;"/>
+            <input type="checkbox" id="myCheck" onclick="clickCheck()"> Tôi đồng ý với điều khoản của công ty
+        </center>
+        <br/>
+        <center>
+            <button class="submits" type="submit" disabled="true" id="sub">Đặt tour</button>
         </center>
         <br/><br/>
     </form:form>
@@ -453,6 +472,19 @@
         }
         if (vehicle == 2) {
             vehicleF.innerHTML = "Ô tô & Máy bay";
+        }
+        document.getElementById("nguoilon-valueV").innerHTML = document.getElementById("nguoilon-value").value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        document.getElementById("treem-valueV").innerHTML = document.getElementById("treem-value").value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        document.getElementById("tongtien").value = Number(document.getElementById("nguoilon-value").value) + Number(document.getElementById("treem-value").value);
+        document.getElementById("tongtienV").innerHTML = document.getElementById("tongtien").value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    function clickCheck() {
+        if (document.getElementById("myCheck").checked == true) {
+            document.getElementById("sub").disabled = false;
+        }
+        else {
+            document.getElementById("sub").disabled = true;
         }
     }
 </script>

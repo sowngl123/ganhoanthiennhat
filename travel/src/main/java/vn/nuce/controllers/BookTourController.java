@@ -1,5 +1,8 @@
 package vn.nuce.controllers;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -11,27 +14,24 @@ import vn.nuce.dto.UserDto;
 import vn.nuce.service.BookTourService;
 import vn.nuce.service.TourService;
 import vn.nuce.service.UserService;
-import vn.nuce.service.impl.BookTourServiceImpl;
-import vn.nuce.service.impl.TourServiceImpl;
-import vn.nuce.service.impl.UserServiceImpl;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.mail.*;
+import javax.mail.internet.*;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
+import java.nio.charset.Charset;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -85,105 +85,237 @@ public class BookTourController {
                            @RequestParam(name = "numChild") String numChild,
                            @RequestParam(name = "price") String price,
                            HttpSession httpSession, ModelMap modelMap) throws AddressException, MessagingException {
-        TourDto tourDto = tourService.findOneTour(id);
-        if (bindingResult.hasErrors()) {
-            setUser(httpSession, modelMap);
-            List<TourDto> tourDtos = tourService.findAllTours();
+        try {
+            boolean kt = true;
+            TourDto tourDto = tourService.findOneTour(id);
+            if (bindingResult.hasErrors()) {
+                setUser(httpSession, modelMap);
+                List<TourDto> tourDtos = tourService.findAllTours();
 
-            if (!modelMap.containsAttribute("bookTourDto")) {
-                modelMap.addAttribute("bookTourDto", new BookTourDto());
-            }
-            modelMap.addAttribute("tour", tourDto);
-            return "book";
-        } else {
-            setUser(httpSession, modelMap);
-            bookTourDto.setTourId(id);
-            bookTourDto.setStatus(0);
-            bookTourDto.setPayStatus(0);
-            LocalDate now = LocalDate.now();
-            Timestamp timestamp = Timestamp.valueOf(now.atStartOfDay());
-            bookTourDto.setCreateDate(timestamp);
-            bookTourDto.setDateConfirm(timestamp);
-            bookTourDto.setNumAdult(Integer.parseInt(numAdult));
-            bookTourDto.setNumChild(Integer.parseInt(numChild));
-            bookTourDto.setPrice(Double.parseDouble(price));
-            UserDto userDto = (UserDto) httpSession.getAttribute("user");
-            if (userDto != null) {
-                Long userID = userDto.getUser_Id();
-                bookTourDto.setUserId(userID);
-                sendMail(bookTourDto, tourDto);
+                if (!modelMap.containsAttribute("bookTourDto")) {
+                    modelMap.addAttribute("bookTourDto", new BookTourDto());
+                }
+                modelMap.addAttribute("tour", tourDto);
+                return "book";
             } else {
-                List<UserDto> userDtos = userService.findAllUsers();
-                Long uId = Long.valueOf(-1);
-                for (UserDto userDto1 : userDtos) {
-                    if (bookTourDto.getEmail().equals(userDto1.getUser_Email()) || bookTourDto.getPhone().equals(userDto1.getUser_Phone())) {
-                        uId = userDto1.getUser_Id();
+                setUser(httpSession, modelMap);
+                bookTourDto.setTourId(id);
+                bookTourDto.setStatus(0);
+                bookTourDto.setPayStatus(0);
+                LocalDate now = LocalDate.now();
+                Timestamp timestamp = Timestamp.valueOf(now.atStartOfDay());
+                bookTourDto.setCreateDate(timestamp);
+                bookTourDto.setDateConfirm(timestamp);
+                bookTourDto.setNumAdult(Integer.parseInt(numAdult));
+                bookTourDto.setNumChild(Integer.parseInt(numChild));
+                bookTourDto.setPrice(Double.parseDouble(price));
+                UserDto userDto = (UserDto) httpSession.getAttribute("user");
+                if (userDto != null) {
+                    Long userID = userDto.getUser_Id();
+                    bookTourDto.setUserId(userID);
+                    kt = false;
+//                    sendMail(bookTourDto, tourDto);
+                } else {
+                    List<UserDto> userDtos = userService.findAllUsers();
+                    Long uId = Long.valueOf(-1);
+                    for (UserDto userDto1 : userDtos) {
+                        if (bookTourDto.getEmail().equals(userDto1.getUser_Email()) || bookTourDto.getPhone().equals(userDto1.getUser_Phone())) {
+                            uId = userDto1.getUser_Id();
+                        }
+                    }
+                    if (uId == -1) {
+                        UserDto userDto1 = new UserDto();
+                        userDto1.setUser_Name(bookTourDto.getPhone());
+                        String s;
+                        do {
+                            s = new String(new java.util.Random().ints(15, 33, 127)
+                                    .toArray(),
+                                    0, 15);
+                            a = A = d = p = 0;
+                            s.chars()
+                                    .map(c ->
+                                            c > 96 & c < 123 ? a = 1
+                                                    : c > 64 & c < 90 ? A = 1
+                                                    : c > 47 & c < 58 ? d = 1
+                                                    : (p = 1))
+                                    .min();
+                        } while (a + A + d + p < 4);
+                        userDto1.setUser_Password(s);
+                        userDto1.setUser_Role(0);
+                        userDto1.setUser_Fullname(bookTourDto.getName());
+                        userDto1.setUser_Phone(bookTourDto.getPhone());
+                        userDto1.setUser_Email(bookTourDto.getEmail());
+                        userDto1.setUser_Createdate(Timestamp.valueOf(now.atStartOfDay()));
+                        userDto1.setUser_Lastupdate(Timestamp.valueOf(LocalDateTime.now()));
+                        userDto1.setUser_Gender(null);
+                        userDto1.setUser_Status(0);
+                        File file = new File("E:/duantotnghiep/travel/src/main/webapp/resources/home/images/avatar.png");
+                        byte[] picByte = new byte[(int) file.length()];
+                        try {
+                            FileInputStream fileInputStream = new FileInputStream(file);
+                            fileInputStream.read(picByte);
+                            fileInputStream.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        userDto1.setImage(picByte);
+                        bookTourDto.setUserId(userDto1.getUser_Id());
+                        userService.saveUser(userDto1);
+                        List<UserDto> userDtos1 = userService.findAllUsers();
+                        Long i = Long.valueOf(-1);
+                        for (UserDto userDto2 : userDtos1) {
+                            if (userDto2.getUser_Email().equals(bookTourDto.getEmail())) {
+                                i = userDto2.getUser_Id();
+                            }
+                        }
+                        bookTourDto.setUserId(i);
+                        kt = true;
+                        sendMailNewUser(bookTourDto, tourDto, s);
+                    } else {
+                        bookTourDto.setUserId(uId);
+                        kt = false;
                     }
                 }
-                if (uId == -1) {
-                    UserDto userDto1 = new UserDto();
-                    userDto1.setUser_Name(bookTourDto.getPhone());
-                    String s;
-                    do {
-                        s = new String(new java.util.Random().ints(15, 33, 127)
-                                .toArray(),
-                                0, 15);
-                        a = A = d = p = 0;
-                        s.chars()
-                                .map(c ->
-                                        c > 96 & c < 123 ? a = 1
-                                                : c > 64 & c < 90 ? A = 1
-                                                : c > 47 & c < 58 ? d = 1
-                                                : (p = 1))
-                                .min();
-                    } while (a + A + d + p < 4);
-                    userDto1.setUser_Password(s);
-                    userDto1.setUser_Role(0);
-                    userDto1.setUser_Fullname(bookTourDto.getName());
-                    userDto1.setUser_Phone(bookTourDto.getPhone());
-                    userDto1.setUser_Email(bookTourDto.getEmail());
-                    userDto1.setUser_Createdate(Timestamp.valueOf(now.atStartOfDay()));
-                    userDto1.setUser_Lastupdate(Timestamp.valueOf(LocalDateTime.now()));
-                    userDto1.setUser_Gender(null);
-                    userDto1.setUser_Status(1);
-                    File file = new File("E:/duantotnghiep/travel/src/main/webapp/resources/home/images/avatar.png");
-                    byte[] picByte = new byte[(int) file.length()];
+                List<BookTourDto> bookTourDtos = userService.findBookTourWaitByUserId(bookTourDto.getUserId());
+                boolean check = true;
+                for (BookTourDto bookTourDto2 : bookTourDtos) {
+                    Calendar c1 = Calendar.getInstance();
+                    Calendar c2 = Calendar.getInstance();
+
+                    TourDto tourDto1 = bookTourService.findTour(bookTourDto2.getRegistration_Id());
+
+                    c1.setTime(tourDto1.getTour_Enddate());
+                    c2.setTime(tourDto.getTour_Departureday());
+
+                    long day = (c2.getTime().getTime() - c1.getTime().getTime()) / (24 * 3600 * 1000);
+                    if (day < 2) {
+                        check = false;
+                    }
+                }
+                if (check == true) {
                     try {
-                        FileInputStream fileInputStream = new FileInputStream(file);
-                        fileInputStream.read(picByte);
-                        fileInputStream.close();
+                        bookTourService.save(bookTourDto);
+                        List<BookTourDto> bookTourDtoList = bookTourService.findAll();
+                        BookTourDto bookTourDto1 = bookTourDtoList.get(bookTourDtoList.size()-1);
+                        DecimalFormat df = new DecimalFormat("###,###,###,###,###");
+                        df.setMaximumIntegerDigits(12);
+                        String tourPrice = df.format(tourDto.getTour_Price());
+                        String totalPrice = df.format(bookTourDto.getPrice());
+                        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                        String body = "<html>\n" +
+                                "<body>\n" +
+                                "    <table border=\"0\" style=\"margin-top: 30px; margin-left: 30px; margin-right: 30px; margin-bottom: 30px; width: 95%;\">\n" +
+                                "        <tr>\n" +
+                                "            <td>\n" +
+                                "                <h1 style=\"font-family:arial unicode ms;\"><img\n" +
+                                "                        src=\"E:/GITHUB/ganhoanthiennhat/travel/src/main/webapp/resources/home/images/logo.png\" />POLYTRAVEL\n" +
+                                "                </h1>\n" +
+                                "            </td>\n" +
+                                "            <td style=\"text-align: right;\">\n" +
+                                "                <div>\n" +
+                                "                    <h2 style=\"font-family:arial unicode ms;\">\n" +
+                                "                       Tòa nhà FPT Polytechnic \n" +
+                                "                    </h2>\n" +
+                                "                    <div style=\"font-family:arial unicode ms;\">Phố Trịnh Văn Bô, Nam Từ Liêm, Hà Nội</div>\n" +
+                                "                    <div style=\"font-family:arial unicode ms;\">Điện thoại: (024) 7300 1955</div>\n" +
+                                "                    <div style=\"font-family:arial unicode ms;\">Email: polytravel188@gmail.com</div>\n" +
+                                "                </div>\n" +
+                                "            </td>\n" +
+                                "        </tr>\n" +
+                                "        <tr>\n" +
+                                "            <td colspan=\"2\">\n" +
+                                "                <hr style=\"border: 1px solid #fa9e1b;\" />\n" +
+                                "            </td>\n" +
+                                "        </tr>\n" +
+                                "        <tr>\n" +
+                                "            <td colspan=\"2\">\n" +
+                                "                <br />\n" +
+                                "            </td>\n" +
+                                "        </tr>\n" +
+                                "        <tr>\n" +
+                                "            <td>\n" +
+                                "                <div>\n" +
+                                "                    <div style=\"font-family:arial unicode ms;\">KHÁCH HÀNG:</div>\n" +
+                                "                    <h2 style=\"font-family:arial unicode ms;\">" + bookTourDto.getName() + "</h2>\n" +
+                                "                    <div style=\"font-family:arial unicode ms;\">" + bookTourDto.getPhone() + "</div>\n" +
+                                "                    <div style=\"font-family:arial unicode ms;\">" + bookTourDto.getEmail() + "</div>\n" +
+                                "                </div>\n" +
+                                "            </td>\n" +
+                                "            <td style=\"text-align: right;\">\n" +
+                                "                <div style=\"font-family:arial unicode ms;\">Ngày tạo hóa đơn: " + LocalDate.now().format(formatters) + "</div>\n" +
+                                "            </td>\n" +
+                                "        </tr>\n" +
+                                "        <tr>\n" +
+                                "            <td colspan=\"2\">\n" +
+                                "                <br />\n" +
+                                "            </td>\n" +
+                                "        </tr>\n" +
+                                "    </table>\n" +
+                                "    <table style=\"margin-left: 30px; margin-right: 30px; margin-bottom: 30px; width: 95%; text-align: center;\">\n" +
+                                "        <tr>\n" +
+                                "            <th style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">Tên tour</th>\n" +
+                                "            <th style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">Giá tour (vnđ)</th>\n" +
+                                "            <th style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">Số lượng người lớn</th>\n" +
+                                "            <th style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">Số lượng trẻ em</th>\n" +
+                                "            <th style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">Tổng tiền (vnđ)</th>\n" +
+                                "        </tr>\n" +
+                                "        <tr style=\"text-align: center;\">\n" +
+                                "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + tourDto.getTour_Name() + "</td>\n" +
+                                "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + tourPrice + "</td>\n" +
+                                "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + bookTourDto.getNumAdult() + "</td>\n" +
+                                "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + bookTourDto.getNumChild() + "</td>\n" +
+                                "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + totalPrice + "</td>\n" +
+                                "        </tr>\n" +
+                                "        <tr style=\"text-align: center;\">\n" +
+                                "            <td colspan=\"2\"></td>\n" +
+                                "            <td colspan=\"2\" style=\"border-bottom: 1px solid #ddd; padding: 10px; text-align: right; font-family:arial unicode ms;\">Tổng tiền (đã bao gồm\n" +
+                                "                VAT):</td>\n" +
+                                "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + totalPrice + " vnđ</td>\n" +
+                                "        </tr>\n" +
+                                "    </table>\n" +
+                                "    <table style=\"margin-left: 30px; margin-right: 30px; margin-bottom: 30px; width: 95%;\">\n" +
+                                "        <tr>\n" +
+                                "            <td colspan=\"2\">\n" +
+                                "                <br />\n" +
+                                "            </td>\n" +
+                                "        </tr>\n" +
+                                "        <tr>\n" +
+                                "            <td colspan=\"2\">\n" +
+                                "                <hr style=\"width: 95%; border: 1px solid #fa9e1b;\" />\n" +
+                                "            </td>\n" +
+                                "        </tr>\n" +
+                                "        <tr>\n" +
+                                "            <td colspan=\"2\">\n" +
+                                "                <center>\n" +
+                                "                    <h4 style=\"font-family:arial unicode ms;\">Hóa đơn được tạo trên máy tính và hợp lệ không cần chữ ký và con dấu.</h4>\n" +
+                                "                </center>\n" +
+                                "            </td>\n" +
+                                "        </tr>\n" +
+                                "    </table>\n" +
+                                "</body>\n" +
+                                "</html>";
+                        OutputStream filee = new FileOutputStream(new File("C:/Users/Admin/Desktop/HoaDon" + bookTourDto1.getRegistration_Id() + ".pdf"));
+                        Document document = new Document();
+                        PdfWriter writer = PdfWriter.getInstance(document, filee);
+                        document.open();
+                        InputStream is = new ByteArrayInputStream(body.getBytes(Charset.forName("UTF-8")));
+                        XMLWorkerHelper.getInstance().parseXHtml(writer, document, is, Charset.forName("UTF-8"));
+                        document.close();
+                        filee.close();
+                        if (kt == false) {
+                            sendMail(bookTourDto1, tourDto);
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    userDto1.setImage(picByte);
-                    bookTourDto.setUserId(userDto1.getUser_Id());
-                    userService.saveUser(userDto1);
-                    List<UserDto> userDtos1 = userService.findAllUsers();
-                    Long i = Long.valueOf(0);
-                    for (UserDto userDto2 : userDtos1) {
-                        if (userDto2.getUser_Email().equals(bookTourDto.getEmail())) {
-                            i = userDto2.getUser_Id();
-                        }
-                    }
-                    bookTourDto.setUserId(i);
-                    sendMailNewUser(bookTourDto, tourDto, s);
-                } else {
-                    bookTourDto.setUserId(uId);
-                    sendMail(bookTourDto, tourDto);
-                }
-            }
-            List<BookTourDto> bookTourDtos = userService.findBookTourWaitByUserId(bookTourDto.getUserId());
-            if (bookTourDtos.isEmpty()) {
-                try {
-                    bookTourService.save(bookTourDto);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
 
-                return "success";
-            } else {
-                return "denied";
+                    return "success";
+                } else {
+                    return "denied";
+                }
             }
+        } catch (Exception e) {
+            return "error";
         }
     }
 
@@ -570,7 +702,7 @@ public class BookTourController {
                     "\t\t\t\t\t\t\t<tr>\n" +
                     "\t\t\t\t\t\t\t\t<td style=\"padding: 0 2.5em; text-align: left;\">\n" +
                     "\t\t\t\t\t\t\t\t\t<div class=\"text\">\n" +
-                    "\t\t\t\t\t\t\t\t\t\t<h2>Cảm ơn quý khách đã đặt tour của công ty Travelix</h2>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<h2>Cảm ơn quý khách đã đặt tour của công ty Polytravel</h2>\n" +
                     "\t\t\t\t\t\t\t\t\t\t<h4>Chúng tôi rất vui thông báo tour của quý khách đã được tiếp nhận và\n" +
                     "\t\t\t\t\t\t\t\t\t\t\tđang trong quá trình xử lý. Chúng tôi sẽ liên lạc sớm nhất với quý khách.\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t\n" +
@@ -630,7 +762,7 @@ public class BookTourController {
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t<li><span class=\"text\">Tòa nhà FPT Polytechnic, Phố Trịnh Văn Bô,\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tNam Từ Liêm, Hà Nội</span></li>\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t<li><span class=\"text\">Điện thoại: (024) 7300 1955</span></a></li>\n" +
-                    "\t\t\t\t\t\t\t\t\t\t\t\t\t<li><span class=\"text\">Email: travelix@gmail.com</span></a></li>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t<li><span class=\"text\">Email: polytravel188@gmail.com</span></a></li>\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t\t</ul>\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t</td>\n" +
                     "\t\t\t\t\t\t\t\t\t\t</tr>\n" +
@@ -654,7 +786,7 @@ public class BookTourController {
 
             // Thay your_gmail thành gmail của bạn, thay your_password
             // thành mật khẩu gmail của bạn
-            transport.connect("smtp.gmail.com", "travelixpoly@gmail.com", "hieu0710chv");
+            transport.connect("smtp.gmail.com", "polytravel188@gmail.com", "poly123456");
             transport.sendMessage(mailMessage, mailMessage.getAllRecipients());
             transport.close();
         } catch (Exception e) {
@@ -1038,7 +1170,7 @@ public class BookTourController {
                     "\t\t\t\t\t\t\t<tr>\n" +
                     "\t\t\t\t\t\t\t\t<td style=\"padding: 0 2.5em; text-align: left;\">\n" +
                     "\t\t\t\t\t\t\t\t\t<div class=\"text\">\n" +
-                    "\t\t\t\t\t\t\t\t\t\t<h2>Cảm ơn quý khách đã đặt tour của công ty Travelix</h2>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t<h2>Cảm ơn quý khách đã đặt tour của công ty PolyTravel</h2>\n" +
                     "\t\t\t\t\t\t\t\t\t\t<h4>Chúng tôi rất vui thông báo tour của quý khách đã được tiếp nhận và\n" +
                     "\t\t\t\t\t\t\t\t\t\t\tđang trong quá trình xử lý. Chúng tôi sẽ liên lạc sớm nhất với quý khách.\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t\n" +
@@ -1070,7 +1202,7 @@ public class BookTourController {
                     "\t\t\t\t\t\t\t\t</div>\n" +
                     "\t\t\t\t\t\t\t</td>\n" +
                     "\t\t\t\t\t\t\t<td style=\"width: 50%; text-align:left;\t\">\n" +
-                    "\t\t\t\t\t\t\t\t<span class=\"price\" style=\"color: #000; font-size: 18px;\">" + bookTourDto.getPriceFormat() +" vnđ</span>\n" +
+                    "\t\t\t\t\t\t\t\t<span class=\"price\" style=\"color: #000; font-size: 18px;\">" + bookTourDto.getPriceFormat() + " vnđ</span>\n" +
                     "\t\t\t\t\t\t\t</td>\n" +
                     "\t\t\t\t\t\t</tr>\n" +
                     "\t\t\t\t\t\t<tr>\n" +
@@ -1096,7 +1228,7 @@ public class BookTourController {
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t<li><span class=\"text\">Tòa nhà FPT Polytechnic, Phố Trịnh Văn Bô,\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tNam Từ Liêm, Hà Nội</span></li>\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t\t\t<li><span class=\"text\">Điện thoại: (024) 7300 1955</span></a></li>\n" +
-                    "\t\t\t\t\t\t\t\t\t\t\t\t\t<li><span class=\"text\">Email: travelix@gmail.com</span></a></li>\n" +
+                    "\t\t\t\t\t\t\t\t\t\t\t\t\t<li><span class=\"text\">Email: polytravel188@gmail.com</span></a></li>\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t\t</ul>\n" +
                     "\t\t\t\t\t\t\t\t\t\t\t</td>\n" +
                     "\t\t\t\t\t\t\t\t\t\t</tr>\n" +
@@ -1113,18 +1245,137 @@ public class BookTourController {
                     "</body>\n" +
                     "\n" +
                     "</html>";
-            mailMessage.setContent(emailBody, "text/html; charset=UTF-8");
+//            mailMessage.setContent(emailBody, "text/html; charset=UTF-8");
+            BodyPart messagePart = new MimeBodyPart();
+            messagePart.setContent(emailBody, "text/html; charset=UTF-8");
+            BodyPart filePart = new MimeBodyPart();
+            File file = new File("C:/Users/Admin/Desktop/HoaDon" + bookTourDto.getRegistration_Id() + ".pdf");
+            DataSource source = new FileDataSource(file);
+            filePart.setDataHandler(new DataHandler(source));
+            filePart.setFileName(file.getName());
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(messagePart);
+            multipart.addBodyPart(filePart);
+            mailMessage.setContent(multipart);
 
             // Step3: Send mail
             Transport transport = getMailSession.getTransport("smtp");
 
             // Thay your_gmail thành gmail của bạn, thay your_password
             // thành mật khẩu gmail của bạn
-            transport.connect("smtp.gmail.com", "travelixpoly@gmail.com", "hieu0710chv");
+            transport.connect("smtp.gmail.com", "polytravel188@gmail.com", "poly123456");
             transport.sendMessage(mailMessage, mailMessage.getAllRecipients());
             transport.close();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void generatePDF(BookTourDto bookTourDto) {
+        try {
+            TourDto tourDto = bookTourService.findTour(bookTourDto.getRegistration_Id());
+            String body = "<html>\n" +
+                    "<body>\n" +
+                    "    <table border=\"0\" style=\"margin-top: 30px; margin-left: 30px; margin-right: 30px; margin-bottom: 30px; width: 95%;\">\n" +
+                    "        <tr>\n" +
+                    "            <td>\n" +
+                    "                <h1 style=\"font-family:arial unicode ms;\"><img\n" +
+                    "                        src=\"E:/GITHUB/ganhoanthiennhat/travel/src/main/webapp/resources/home/images/logo.png\" />POLYTRAVEL\n" +
+                    "                </h1>\n" +
+                    "            </td>\n" +
+                    "            <td style=\"text-align: right;\">\n" +
+                    "                <div>\n" +
+                    "                    <h2 style=\"font-family:arial unicode ms;\">\n" +
+                    "                        \n" +
+                    "                    </h2>\n" +
+                    "                    <div style=\"font-family:arial unicode ms;\">Tòa nhà FPT Polytechnic, Phố Trịnh Văn Bô, Nam Từ Liêm, Hà Nội</div>\n" +
+                    "                    <div style=\"font-family:arial unicode ms;\">Điện thoại: (024) 7300 1955</div>\n" +
+                    "                    <div style=\"font-family:arial unicode ms;\">Email: travelix@gmail.com</div>\n" +
+                    "                </div>\n" +
+                    "            </td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td colspan=\"2\">\n" +
+                    "                <hr style=\"border: 1px solid #fa9e1b;\" />\n" +
+                    "            </td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td colspan=\"2\">\n" +
+                    "                <br />\n" +
+                    "            </td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td>\n" +
+                    "                <div>\n" +
+                    "                    <div style=\"font-family:arial unicode ms;\">KHÁCH HÀNG:</div>\n" +
+                    "                    <h2 style=\"font-family:arial unicode ms;\">" + bookTourDto.getName() + "</h2>\n" +
+                    "                    <div style=\"font-family:arial unicode ms;\">" + bookTourDto.getPhone() + "</div>\n" +
+                    "                    <div style=\"font-family:arial unicode ms;\">" + bookTourDto.getEmail() + "</div>\n" +
+                    "                </div>\n" +
+                    "            </td>\n" +
+                    "            <td style=\"text-align: right;\">\n" +
+                    "                <div style=\"font-family:arial unicode ms;\">Ngày tạo hóa đơn: 30/10/2018</div>\n" +
+                    "            </td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td colspan=\"2\">\n" +
+                    "                <br />\n" +
+                    "            </td>\n" +
+                    "        </tr>\n" +
+                    "    </table>\n" +
+                    "    <table style=\"margin-left: 30px; margin-right: 30px; margin-bottom: 30px; width: 95%; text-align: center;\">\n" +
+                    "        <tr>\n" +
+                    "            <th style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">Tên tour</th>\n" +
+                    "            <th style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">Giá tour</th>\n" +
+                    "            <th style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">Số lượng người lớn</th>\n" +
+                    "            <th style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">Số lượng trẻ em</th>\n" +
+                    "            <th style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">Tổng tiền</th>\n" +
+                    "        </tr>\n" +
+                    "        <tr style=\"text-align: center;\">\n" +
+                    "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + tourDto.getTour_Name() + "</td>\n" +
+                    "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + tourDto.getTour_Price() + "</td>\n" +
+                    "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + bookTourDto.getNumAdult() + "</td>\n" +
+                    "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + bookTourDto.getNumChild() + "</td>\n" +
+                    "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + bookTourDto.getPrice() + " vnđ</td>\n" +
+                    "        </tr>\n" +
+                    "        <tr style=\"text-align: center;\">\n" +
+                    "            <td colspan=\"2\"></td>\n" +
+                    "            <td colspan=\"2\" style=\"border-bottom: 1px solid #ddd; padding: 10px; text-align: right; font-family:arial unicode ms;\">Tổng tiền (đã bao gồm\n" +
+                    "                VAT):</td>\n" +
+                    "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + bookTourDto.getPrice() + " vnđ</td>\n" +
+                    "        </tr>\n" +
+                    "    </table>\n" +
+                    "    <table style=\"margin-left: 30px; margin-right: 30px; margin-bottom: 30px; width: 95%;\">\n" +
+                    "        <tr>\n" +
+                    "            <td colspan=\"2\">\n" +
+                    "                <br />\n" +
+                    "            </td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td colspan=\"2\">\n" +
+                    "                <hr style=\"width: 95%; border: 1px solid #fa9e1b;\" />\n" +
+                    "            </td>\n" +
+                    "        </tr>\n" +
+                    "        <tr>\n" +
+                    "            <td colspan=\"2\">\n" +
+                    "                <center>\n" +
+                    "                    <h4 style=\"font-family:arial unicode ms;\">Hóa đơn được tạo trên máy tính và hợp lệ không cần chữ ký và con dấu.</h4>\n" +
+                    "                </center>\n" +
+                    "            </td>\n" +
+                    "        </tr>\n" +
+                    "    </table>\n" +
+                    "</body>\n" +
+                    "</html>";
+            OutputStream filee = new FileOutputStream(new File("C:/Users/Admin/Desktop/test.pdf"));
+            Document document = new Document();
+            PdfWriter writer = PdfWriter.getInstance(document, filee);
+            document.open();
+            InputStream is = new ByteArrayInputStream(body.getBytes(Charset.forName("UTF-8")));
+            XMLWorkerHelper.getInstance().parseXHtml(writer, document, is, Charset.forName("UTF-8"));
+            document.close();
+            filee.close();
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
 }

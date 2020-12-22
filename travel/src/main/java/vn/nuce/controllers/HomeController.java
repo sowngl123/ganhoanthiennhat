@@ -82,6 +82,8 @@ public class HomeController {
     public String about(){
         return "home/about";
     }
+    @GetMapping("/errorr")
+    public String errorr() {return "error";}
 
 
 

@@ -55,15 +55,20 @@ public class ForgotPasswordController {
 
     @GetMapping("/forgot-password3")
     public String showChangePass(ModelMap modelMap) {
-        modelMap.addAttribute("password", userDto.getUser_Password());
-
-        return "forgot-password3";
+        if (userDto != null) {
+            modelMap.addAttribute("password", userDto.getUser_Password());
+            return "forgot-password3";
+        }
+        else {
+            return "error";
+        }
     }
 
     @PostMapping("/forgot-password3")
     public String setPassword(@RequestParam(name = "password") String pass) {
         userDto.setUser_Password(pass);
         userService.updateUser(userDto);
+        userDto = null;
 
         return "forgot-password4";
     }

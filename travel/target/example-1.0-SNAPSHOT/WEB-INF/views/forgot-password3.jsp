@@ -98,7 +98,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
         var pass = document.getElementById("pass").value;
         var password = document.getElementById("password").value;
         if (pass == password) {
-            document.getElementById("submit").disabled = false;
+            document.getElementById("submit").disabled = true;
             document.getElementById("error2").style.display = "block";
         }
         else {
@@ -111,11 +111,11 @@ License URL: http://creativecommons.org/licenses/by/3.0/
         var rePass = document.getElementById("rePass").value;
 
         if (pass != rePass) {
-            document.getElementById("submit").disabled = false;
+            document.getElementById("submit").disabled = true;
             document.getElementById("error1").style.display = "block";
         }
         else {
-            document.getElementById("submit").disabled = true;
+            document.getElementById("submit").disabled = false;
             document.getElementById("error1").style.display = "none";
         }
     }
