@@ -30,47 +30,66 @@ public class ForgotPasswordController {
 
     @GetMapping("/forgot-password1")
     public String showForgotPassword(ModelMap modelMap) {
-        List<UserDto> userDtos = userService.findAllUsers();
-        List<String> emails = new ArrayList<>();
-        for (UserDto userDto1 : userDtos) {
-            emails.add(userDto1.getUser_Email());
-        }
-        modelMap.addAttribute("listEmail", emails);
+        try {
+            List<UserDto> userDtos = userService.findAllUsers();
+            List<String> emails = new ArrayList<>();
+            for (UserDto userDto1 : userDtos) {
+                emails.add(userDto1.getUser_Email());
+            }
+            modelMap.addAttribute("listEmail", emails);
 
-        return "forgot-password1";
+            return "forgot-password1";
+        }
+        catch (Exception e) {
+            return "error";
+        }
     }
 
     @PostMapping("/forgot-password1")
     public String getEmailAndCode(@RequestParam(name = "text") String text) {
-        List<UserDto> userDtos = userService.findAllUsers();
-        for (UserDto userDto1 : userDtos) {
-            if (userDto1.getUser_Email().equalsIgnoreCase(text)) {
-                userDto = userDto1;
+        try {
+            List<UserDto> userDtos = userService.findAllUsers();
+            for (UserDto userDto1 : userDtos) {
+                if (userDto1.getUser_Email().equalsIgnoreCase(text)) {
+                    userDto = userDto1;
+                }
             }
-        }
-        sendMail(userDto);
+            sendMail(userDto);
 
-        return "forgot-password2";
+            return "forgot-password2";
+        }
+        catch (Exception e) {
+            return "error";
+        }
     }
 
     @GetMapping("/forgot-password3")
     public String showChangePass(ModelMap modelMap) {
-        if (userDto != null) {
-            modelMap.addAttribute("password", userDto.getUser_Password());
-            return "forgot-password3";
+        try {
+            if (userDto != null) {
+                modelMap.addAttribute("password", userDto.getUser_Password());
+                return "forgot-password3";
+            } else {
+                return "error";
+            }
         }
-        else {
+        catch (Exception e) {
             return "error";
         }
     }
 
     @PostMapping("/forgot-password3")
     public String setPassword(@RequestParam(name = "password") String pass) {
-        userDto.setUser_Password(pass);
-        userService.updateUser(userDto);
-        userDto = null;
+        try {
+            userDto.setUser_Password(pass);
+            userService.updateUser(userDto);
+            userDto = null;
 
-        return "forgot-password4";
+            return "forgot-password4";
+        }
+        catch (Exception e) {
+            return "error";
+        }
     }
 
     private void sendMail(UserDto userDto) {
@@ -501,7 +520,7 @@ public class ForgotPasswordController {
 
             // Thay your_gmail thành gmail của bạn, thay your_password
             // thành mật khẩu gmail của bạn
-            transport.connect("smtp.gmail.com", "travelixpoly@gmail.com", "hieu0710chv");
+            transport.connect("smtp.gmail.com", "polytravel188@gmail.com", "poly123456");
             transport.sendMessage(mailMessage, mailMessage.getAllRecipients());
             transport.close();
         } catch (Exception e) {

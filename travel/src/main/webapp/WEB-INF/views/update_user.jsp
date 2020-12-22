@@ -161,7 +161,7 @@
                                             <h4>Họ và tên</h4>
                                         </label>
                                         <form:input type="text" class="form-control" path="user_Fullname"
-                                                    placeholder="*" id="uFullName" oninput="validateFullName()"/><br/>
+                                                    placeholder="*" id="uFullName" oninput="validateFullName()" onload="load()"/><br/>
                                         <form:input type="hidden" class="form-control" path="user_Id" placeholder="*"/>
                                         <form:input type="hidden" class="form-control" path="image" placeholder="*"/>
                                         <form:input type="hidden" class="form-control" path="user_Createdate"
@@ -185,8 +185,8 @@
                                         </label>
                                         <form:select path="user_Gender" class="form-control" style="height: 34px;">
                                             <option value="1">Nam</option>
-                                            <option value="2">Nữ</option>
-                                            <option value="3">Khác</option>
+                                            <option value="0">Nữ</option>
+                                            <option value="2">Khác</option>
                                         </form:select><br/>
                                     </div>
                                 </div>
@@ -278,6 +278,7 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
+
 
 
         $(".file-upload").on('change', function () {

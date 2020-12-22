@@ -180,7 +180,7 @@
                                         </label>
                                         <input type="password" class="form-control" name="newPass" id="new-pass" oninput="checkPass1()"><br/>
                                         <p style="color: red; display: none" id="errorInUse">Mật khẩu này bạn đang sử dụng</p>
-                                        <p style="color: red; display: none" id="errorLength">Mật khẩu phải có 6 ký tự trở lên</p>
+                                        <p style="color: red; display: none" id="errorLength">Mật khẩu phải có từ 6 ký tự trở lên</p>
                                     </div>
                                 </div>
 

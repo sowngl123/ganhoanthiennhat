@@ -67,6 +67,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                         <form method="POST" autocomplete="on">
                             <label>Mật khẩu:</label>
                             <input type="password" name="password" required="" id="pass" oninput="check1()">
+                            <p style="color: red; display: none" id="error3">Mật khẩu phải có từ 6 ký tự trở lên</p>
                             <p style="color: red; display: none" id="error2">Mật khẩu này bạn đã sử dụng, hãy thử mật khẩu khác</p>
                             <label>Nhập lại mật khẩu:</label>
                             <input type="password" name="repassword" required="" id="rePass" oninput="check2()">
@@ -97,12 +98,19 @@ License URL: http://creativecommons.org/licenses/by/3.0/
     function check1() {
         var pass = document.getElementById("pass").value;
         var password = document.getElementById("password").value;
-        if (pass == password) {
+        if (pass.length < 6) {
             document.getElementById("submit").disabled = true;
-            document.getElementById("error2").style.display = "block";
+            document.getElementById("error3").style.display = "block";
         }
         else {
-            document.getElementById("error2").style.display = "none";
+            document.getElementById("error3").style.display = "none";
+            if (pass == password) {
+                document.getElementById("submit").disabled = true;
+                document.getElementById("error2").style.display = "block";
+            }
+            else {
+                document.getElementById("error2").style.display = "none";
+            }
         }
     }
 

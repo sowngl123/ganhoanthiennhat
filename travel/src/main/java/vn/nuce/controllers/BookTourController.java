@@ -52,31 +52,36 @@ public class BookTourController {
 
     @GetMapping("/book/{id}")
     public String showPageBookTour(@PathVariable Long id, HttpSession httpSession, ModelMap modelMap) {
-        setUser(httpSession, modelMap);
-        List<TourDto> tourDtos = tourService.findAllTours();
-        TourDto tourDto = tourService.findOneTour(id);
+        try {
+            setUser(httpSession, modelMap);
+            List<TourDto> tourDtos = tourService.findAllTours();
+            TourDto tourDto = tourService.findOneTour(id);
 
-        Calendar c1 = Calendar.getInstance();
-        Calendar c2 = Calendar.getInstance();
+            Calendar c1 = Calendar.getInstance();
+            Calendar c2 = Calendar.getInstance();
 
-        c1.setTime(tourDto.getTour_Departureday());
-        c2.setTime(tourDto.getTour_Enddate());
+            c1.setTime(tourDto.getTour_Departureday());
+            c2.setTime(tourDto.getTour_Enddate());
 
-        long day = (c2.getTime().getTime() - c1.getTime().getTime()) / (24 * 3600 * 1000);
-        modelMap.addAttribute("tourDay", day);
-        if (!modelMap.containsAttribute("bookTourDto")) {
-            modelMap.addAttribute("bookTourDto", new BookTourDto());
+            long day = (c2.getTime().getTime() - c1.getTime().getTime()) / (24 * 3600 * 1000);
+            modelMap.addAttribute("tourDay", day);
+            if (!modelMap.containsAttribute("bookTourDto")) {
+                modelMap.addAttribute("bookTourDto", new BookTourDto());
+            }
+            modelMap.addAttribute("tour", tourDto);
+            BookTourDto bookTourDto = new BookTourDto();
+            UserDto userDto = (UserDto) httpSession.getAttribute("user");
+            if (userDto != null) {
+                bookTourDto.setName(userDto.getUser_Fullname());
+                bookTourDto.setPhone(userDto.getUser_Phone());
+                bookTourDto.setEmail(userDto.getUser_Email());
+            }
+            modelMap.addAttribute("bookTourDto", bookTourDto);
+            return "book";
         }
-        modelMap.addAttribute("tour", tourDto);
-        BookTourDto bookTourDto = new BookTourDto();
-        UserDto userDto = (UserDto) httpSession.getAttribute("user");
-        if (userDto != null) {
-            bookTourDto.setName(userDto.getUser_Fullname());
-            bookTourDto.setPhone(userDto.getUser_Phone());
-            bookTourDto.setEmail(userDto.getUser_Email());
+        catch (Exception e) {
+            return "error";
         }
-        modelMap.addAttribute("bookTourDto", bookTourDto);
-        return "book";
     }
 
     @PostMapping("/book/{id}")
@@ -195,120 +200,12 @@ public class BookTourController {
                 if (check == true) {
                     try {
                         bookTourService.save(bookTourDto);
-                        List<BookTourDto> bookTourDtoList = bookTourService.findAll();
-                        BookTourDto bookTourDto1 = bookTourDtoList.get(bookTourDtoList.size()-1);
-                        DecimalFormat df = new DecimalFormat("###,###,###,###,###");
-                        df.setMaximumIntegerDigits(12);
-                        String tourPrice = df.format(tourDto.getTour_Price());
-                        String totalPrice = df.format(bookTourDto.getPrice());
-                        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                        String body = "<html>\n" +
-                                "<body>\n" +
-                                "    <table border=\"0\" style=\"margin-top: 30px; margin-left: 30px; margin-right: 30px; margin-bottom: 30px; width: 95%;\">\n" +
-                                "        <tr>\n" +
-                                "            <td>\n" +
-                                "                <h1 style=\"font-family:arial unicode ms;\"><img\n" +
-                                "                        src=\"E:/GITHUB/ganhoanthiennhat/travel/src/main/webapp/resources/home/images/logo.png\" />POLYTRAVEL\n" +
-                                "                </h1>\n" +
-                                "            </td>\n" +
-                                "            <td style=\"text-align: right;\">\n" +
-                                "                <div>\n" +
-                                "                    <h2 style=\"font-family:arial unicode ms;\">\n" +
-                                "                       Tòa nhà FPT Polytechnic \n" +
-                                "                    </h2>\n" +
-                                "                    <div style=\"font-family:arial unicode ms;\">Phố Trịnh Văn Bô, Nam Từ Liêm, Hà Nội</div>\n" +
-                                "                    <div style=\"font-family:arial unicode ms;\">Điện thoại: (024) 7300 1955</div>\n" +
-                                "                    <div style=\"font-family:arial unicode ms;\">Email: polytravel188@gmail.com</div>\n" +
-                                "                </div>\n" +
-                                "            </td>\n" +
-                                "        </tr>\n" +
-                                "        <tr>\n" +
-                                "            <td colspan=\"2\">\n" +
-                                "                <hr style=\"border: 1px solid #fa9e1b;\" />\n" +
-                                "            </td>\n" +
-                                "        </tr>\n" +
-                                "        <tr>\n" +
-                                "            <td colspan=\"2\">\n" +
-                                "                <br />\n" +
-                                "            </td>\n" +
-                                "        </tr>\n" +
-                                "        <tr>\n" +
-                                "            <td>\n" +
-                                "                <div>\n" +
-                                "                    <div style=\"font-family:arial unicode ms;\">KHÁCH HÀNG:</div>\n" +
-                                "                    <h2 style=\"font-family:arial unicode ms;\">" + bookTourDto.getName() + "</h2>\n" +
-                                "                    <div style=\"font-family:arial unicode ms;\">" + bookTourDto.getPhone() + "</div>\n" +
-                                "                    <div style=\"font-family:arial unicode ms;\">" + bookTourDto.getEmail() + "</div>\n" +
-                                "                </div>\n" +
-                                "            </td>\n" +
-                                "            <td style=\"text-align: right;\">\n" +
-                                "                <div style=\"font-family:arial unicode ms;\">Ngày tạo hóa đơn: " + LocalDate.now().format(formatters) + "</div>\n" +
-                                "            </td>\n" +
-                                "        </tr>\n" +
-                                "        <tr>\n" +
-                                "            <td colspan=\"2\">\n" +
-                                "                <br />\n" +
-                                "            </td>\n" +
-                                "        </tr>\n" +
-                                "    </table>\n" +
-                                "    <table style=\"margin-left: 30px; margin-right: 30px; margin-bottom: 30px; width: 95%; text-align: center;\">\n" +
-                                "        <tr>\n" +
-                                "            <th style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">Tên tour</th>\n" +
-                                "            <th style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">Giá tour (vnđ)</th>\n" +
-                                "            <th style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">Số lượng người lớn</th>\n" +
-                                "            <th style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">Số lượng trẻ em</th>\n" +
-                                "            <th style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">Tổng tiền (vnđ)</th>\n" +
-                                "        </tr>\n" +
-                                "        <tr style=\"text-align: center;\">\n" +
-                                "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + tourDto.getTour_Name() + "</td>\n" +
-                                "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + tourPrice + "</td>\n" +
-                                "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + bookTourDto.getNumAdult() + "</td>\n" +
-                                "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + bookTourDto.getNumChild() + "</td>\n" +
-                                "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + totalPrice + "</td>\n" +
-                                "        </tr>\n" +
-                                "        <tr style=\"text-align: center;\">\n" +
-                                "            <td colspan=\"2\"></td>\n" +
-                                "            <td colspan=\"2\" style=\"border-bottom: 1px solid #ddd; padding: 10px; text-align: right; font-family:arial unicode ms;\">Tổng tiền (đã bao gồm\n" +
-                                "                VAT):</td>\n" +
-                                "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + totalPrice + " vnđ</td>\n" +
-                                "        </tr>\n" +
-                                "    </table>\n" +
-                                "    <table style=\"margin-left: 30px; margin-right: 30px; margin-bottom: 30px; width: 95%;\">\n" +
-                                "        <tr>\n" +
-                                "            <td colspan=\"2\">\n" +
-                                "                <br />\n" +
-                                "            </td>\n" +
-                                "        </tr>\n" +
-                                "        <tr>\n" +
-                                "            <td colspan=\"2\">\n" +
-                                "                <hr style=\"width: 95%; border: 1px solid #fa9e1b;\" />\n" +
-                                "            </td>\n" +
-                                "        </tr>\n" +
-                                "        <tr>\n" +
-                                "            <td colspan=\"2\">\n" +
-                                "                <center>\n" +
-                                "                    <h4 style=\"font-family:arial unicode ms;\">Hóa đơn được tạo trên máy tính và hợp lệ không cần chữ ký và con dấu.</h4>\n" +
-                                "                </center>\n" +
-                                "            </td>\n" +
-                                "        </tr>\n" +
-                                "    </table>\n" +
-                                "</body>\n" +
-                                "</html>";
-                        OutputStream filee = new FileOutputStream(new File("C:/Users/Admin/Desktop/HoaDon" + bookTourDto1.getRegistration_Id() + ".pdf"));
-                        Document document = new Document();
-                        PdfWriter writer = PdfWriter.getInstance(document, filee);
-                        document.open();
-                        InputStream is = new ByteArrayInputStream(body.getBytes(Charset.forName("UTF-8")));
-                        XMLWorkerHelper.getInstance().parseXHtml(writer, document, is, Charset.forName("UTF-8"));
-                        document.close();
-                        filee.close();
                         if (kt == false) {
-                            sendMail(bookTourDto1, tourDto);
+                            sendMail(bookTourDto, tourDto);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
                     return "success";
                 } else {
                     return "denied";
@@ -1245,18 +1142,7 @@ public class BookTourController {
                     "</body>\n" +
                     "\n" +
                     "</html>";
-//            mailMessage.setContent(emailBody, "text/html; charset=UTF-8");
-            BodyPart messagePart = new MimeBodyPart();
-            messagePart.setContent(emailBody, "text/html; charset=UTF-8");
-            BodyPart filePart = new MimeBodyPart();
-            File file = new File("C:/Users/Admin/Desktop/HoaDon" + bookTourDto.getRegistration_Id() + ".pdf");
-            DataSource source = new FileDataSource(file);
-            filePart.setDataHandler(new DataHandler(source));
-            filePart.setFileName(file.getName());
-            Multipart multipart = new MimeMultipart();
-            multipart.addBodyPart(messagePart);
-            multipart.addBodyPart(filePart);
-            mailMessage.setContent(multipart);
+            mailMessage.setContent(emailBody, "text/html; charset=UTF-8");
 
             // Step3: Send mail
             Transport transport = getMailSession.getTransport("smtp");
@@ -1271,111 +1157,4 @@ public class BookTourController {
         }
     }
 
-    private void generatePDF(BookTourDto bookTourDto) {
-        try {
-            TourDto tourDto = bookTourService.findTour(bookTourDto.getRegistration_Id());
-            String body = "<html>\n" +
-                    "<body>\n" +
-                    "    <table border=\"0\" style=\"margin-top: 30px; margin-left: 30px; margin-right: 30px; margin-bottom: 30px; width: 95%;\">\n" +
-                    "        <tr>\n" +
-                    "            <td>\n" +
-                    "                <h1 style=\"font-family:arial unicode ms;\"><img\n" +
-                    "                        src=\"E:/GITHUB/ganhoanthiennhat/travel/src/main/webapp/resources/home/images/logo.png\" />POLYTRAVEL\n" +
-                    "                </h1>\n" +
-                    "            </td>\n" +
-                    "            <td style=\"text-align: right;\">\n" +
-                    "                <div>\n" +
-                    "                    <h2 style=\"font-family:arial unicode ms;\">\n" +
-                    "                        \n" +
-                    "                    </h2>\n" +
-                    "                    <div style=\"font-family:arial unicode ms;\">Tòa nhà FPT Polytechnic, Phố Trịnh Văn Bô, Nam Từ Liêm, Hà Nội</div>\n" +
-                    "                    <div style=\"font-family:arial unicode ms;\">Điện thoại: (024) 7300 1955</div>\n" +
-                    "                    <div style=\"font-family:arial unicode ms;\">Email: travelix@gmail.com</div>\n" +
-                    "                </div>\n" +
-                    "            </td>\n" +
-                    "        </tr>\n" +
-                    "        <tr>\n" +
-                    "            <td colspan=\"2\">\n" +
-                    "                <hr style=\"border: 1px solid #fa9e1b;\" />\n" +
-                    "            </td>\n" +
-                    "        </tr>\n" +
-                    "        <tr>\n" +
-                    "            <td colspan=\"2\">\n" +
-                    "                <br />\n" +
-                    "            </td>\n" +
-                    "        </tr>\n" +
-                    "        <tr>\n" +
-                    "            <td>\n" +
-                    "                <div>\n" +
-                    "                    <div style=\"font-family:arial unicode ms;\">KHÁCH HÀNG:</div>\n" +
-                    "                    <h2 style=\"font-family:arial unicode ms;\">" + bookTourDto.getName() + "</h2>\n" +
-                    "                    <div style=\"font-family:arial unicode ms;\">" + bookTourDto.getPhone() + "</div>\n" +
-                    "                    <div style=\"font-family:arial unicode ms;\">" + bookTourDto.getEmail() + "</div>\n" +
-                    "                </div>\n" +
-                    "            </td>\n" +
-                    "            <td style=\"text-align: right;\">\n" +
-                    "                <div style=\"font-family:arial unicode ms;\">Ngày tạo hóa đơn: 30/10/2018</div>\n" +
-                    "            </td>\n" +
-                    "        </tr>\n" +
-                    "        <tr>\n" +
-                    "            <td colspan=\"2\">\n" +
-                    "                <br />\n" +
-                    "            </td>\n" +
-                    "        </tr>\n" +
-                    "    </table>\n" +
-                    "    <table style=\"margin-left: 30px; margin-right: 30px; margin-bottom: 30px; width: 95%; text-align: center;\">\n" +
-                    "        <tr>\n" +
-                    "            <th style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">Tên tour</th>\n" +
-                    "            <th style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">Giá tour</th>\n" +
-                    "            <th style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">Số lượng người lớn</th>\n" +
-                    "            <th style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">Số lượng trẻ em</th>\n" +
-                    "            <th style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">Tổng tiền</th>\n" +
-                    "        </tr>\n" +
-                    "        <tr style=\"text-align: center;\">\n" +
-                    "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + tourDto.getTour_Name() + "</td>\n" +
-                    "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + tourDto.getTour_Price() + "</td>\n" +
-                    "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + bookTourDto.getNumAdult() + "</td>\n" +
-                    "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + bookTourDto.getNumChild() + "</td>\n" +
-                    "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + bookTourDto.getPrice() + " vnđ</td>\n" +
-                    "        </tr>\n" +
-                    "        <tr style=\"text-align: center;\">\n" +
-                    "            <td colspan=\"2\"></td>\n" +
-                    "            <td colspan=\"2\" style=\"border-bottom: 1px solid #ddd; padding: 10px; text-align: right; font-family:arial unicode ms;\">Tổng tiền (đã bao gồm\n" +
-                    "                VAT):</td>\n" +
-                    "            <td style=\"border-bottom: 1px solid #ddd; padding: 10px; font-family:arial unicode ms;\">" + bookTourDto.getPrice() + " vnđ</td>\n" +
-                    "        </tr>\n" +
-                    "    </table>\n" +
-                    "    <table style=\"margin-left: 30px; margin-right: 30px; margin-bottom: 30px; width: 95%;\">\n" +
-                    "        <tr>\n" +
-                    "            <td colspan=\"2\">\n" +
-                    "                <br />\n" +
-                    "            </td>\n" +
-                    "        </tr>\n" +
-                    "        <tr>\n" +
-                    "            <td colspan=\"2\">\n" +
-                    "                <hr style=\"width: 95%; border: 1px solid #fa9e1b;\" />\n" +
-                    "            </td>\n" +
-                    "        </tr>\n" +
-                    "        <tr>\n" +
-                    "            <td colspan=\"2\">\n" +
-                    "                <center>\n" +
-                    "                    <h4 style=\"font-family:arial unicode ms;\">Hóa đơn được tạo trên máy tính và hợp lệ không cần chữ ký và con dấu.</h4>\n" +
-                    "                </center>\n" +
-                    "            </td>\n" +
-                    "        </tr>\n" +
-                    "    </table>\n" +
-                    "</body>\n" +
-                    "</html>";
-            OutputStream filee = new FileOutputStream(new File("C:/Users/Admin/Desktop/test.pdf"));
-            Document document = new Document();
-            PdfWriter writer = PdfWriter.getInstance(document, filee);
-            document.open();
-            InputStream is = new ByteArrayInputStream(body.getBytes(Charset.forName("UTF-8")));
-            XMLWorkerHelper.getInstance().parseXHtml(writer, document, is, Charset.forName("UTF-8"));
-            document.close();
-            filee.close();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
 }

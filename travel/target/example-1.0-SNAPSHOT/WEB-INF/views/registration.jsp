@@ -18,23 +18,30 @@ License URL: http://creativecommons.org/licenses/by/3.0/
     <!-- Meta-Tags -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="keywords" content="Travel Agency Sign In Form Widget Responsive, Login Form Web Template, Flat Pricing Tables, Flat Drop-Downs, Sign-Up Web Templates, Flat Web Templates, Login Sign-up Responsive Web Template, Smartphone Compatible Web Template, Free Web Designs for Nokia, Samsung, LG, Sony Ericsson, Motorola Web Design" />
-    <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+    <meta name="keywords"
+          content="Travel Agency Sign In Form Widget Responsive, Login Form Web Template, Flat Pricing Tables, Flat Drop-Downs, Sign-Up Web Templates, Flat Web Templates, Login Sign-up Responsive Web Template, Smartphone Compatible Web Template, Free Web Designs for Nokia, Samsung, LG, Sony Ericsson, Motorola Web Design"/>
+    <script type="application/x-javascript"> addEventListener("load", function () {
+        setTimeout(hideURLbar, 0);
+    }, false);
+
+    function hideURLbar() {
+        window.scrollTo(0, 1);
+    } </script>
     <!-- //Meta-Tags -->
 
     <!-- Custom-Styleheet-Links -->
-    <link href="<c:url value="/resources/home/css/style.css"/>" rel="stylesheet" />
-    <link href="<c:url value="/resources/home/css/animate-custom.css"/>" rel="stylesheet" />
+    <link href="<c:url value="/resources/home/css/style.css"/>" rel="stylesheet"/>
+    <link href="<c:url value="/resources/home/css/animate-custom.css"/>" rel="stylesheet"/>
     <!-- //Custom-Styleheet-Links -->
 
     <!-- Fonts -->
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" type="text/css" media="all">
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700" 		  type="text/css" media="all">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" type="text/css"
+          media="all">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700" type="text/css" media="all">
     <!-- //Fonts -->
 
 </head>
 <!-- //Head -->
-
 
 
 <!-- Body -->
@@ -57,28 +64,39 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                 <div id="wrapper">
                     <div id="register" class="animate w3layouts agileits form" style="height: 472px;">
                         <h2>Đăng ký</h2>
-                        <form  action="#" autocomplete="on" method="post">
+                        <form action="#" autocomplete="on" method="post">
                             <form method="post">
                                 <label>E-mail</label>
                                 <input type="text" Name="user_Email" required="" id="email" oninput="validateEmail()">
                                 <p style="color: red;display: none" id="errorEmailBlank">Không được để trống email</p>
-                                <p style="color: red;display: none" id="errorEmailConvert">Không đúng định dạng email</p>
-                                <p style="color: red;display: none" id="errorEmailUnique">Email đã được đăng ký cho tài khoản khác</p>
+                                <p style="color: red;display: none" id="errorEmailConvert">Không đúng định dạng
+                                    email</p>
+                                <p style="color: red;display: none" id="errorEmailUnique">Email đã được đăng ký cho tài
+                                    khoản khác</p>
                                 <label>Số điện thoại</label>
-                                <input type="text" class="name w3layouts agileits" Name="user_Name" required="" id="phone" oninput="validatePhone()">
-                                <p style="color: red;display: none" id="errorPhoneBlank">Không được để trống số điện thoại</p>
-                                <p style="color: red;display: none" id="errorPhoneConvert">Không đúng định dạng số điện thoại</p>
-                                <p style="color: red;display: none" id="errorPhoneUnique">Số điện thoại đã được đăng ký cho tài khoản khác</p>
+                                <input type="text" class="name w3layouts agileits" Name="user_Name" required=""
+                                       id="phone" oninput="validatePhone()">
+                                <p style="color: red;display: none" id="errorPhoneBlank">Không được để trống số điện
+                                    thoại</p>
+                                <p style="color: red;display: none" id="errorPhoneConvert">Không đúng định dạng số điện
+                                    thoại</p>
+                                <p style="color: red;display: none" id="errorPhoneUnique">Số điện thoại đã được đăng ký
+                                    cho tài khoản khác</p>
                                 <label>Mật khẩu</label>
-                                <input type="password" Name="user_Password" required="" id="pass" oninput="validatePass()">
+                                <input type="password" Name="user_Password" required="" id="pass"
+                                       oninput="validatePass()">
                                 <p style="color: red;display: none" id="errorPassBlank">Không được để trống mật khẩu</p>
+                                <p style="color: red; display: none" id="errorPassLength">Mật khẩu phải có từ 6 ký tự
+                                    trở lên</p>
                                 <label>Nhập lại mật khẩu</label>
-                                <input type="password" Name="REuser_Password" required="" id="rePass" oninput="validateRePass()">
-                                <p style="color: red;display: none" id="errorRePassBlank">Không được để trống nhập lại mật khẩu</p>
+                                <input type="password" Name="REuser_Password" required="" id="rePass"
+                                       oninput="validateRePass()">
+                                <p style="color: red;display: none" id="errorRePassBlank">Không được để trống nhập lại
+                                    mật khẩu</p>
                                 <p style="color: red;display: none" id="errorRePassEqual">Không đúng mật khẩu</p>
-                                <input hidden type="text" Name="user_Status" value="1" >
-                                <input hidden type="text" Name="user_Role" value="0" >
-                                <input hidden type="text" Name="user_Gender" value="0" >
+                                <input hidden type="text" Name="user_Status" value="1">
+                                <input hidden type="text" Name="user_Role" value="0">
+                                <input hidden type="text" Name="user_Gender" value="3">
                                 <div class="send-button w3layouts agileits">
                                     <form action="#" method="post">
                                         <input type="submit" value="Đăng ký" id="submit" disabled="true">
@@ -122,14 +140,12 @@ License URL: http://creativecommons.org/licenses/by/3.0/
         if (email.length == 0) {
             document.getElementById("errorEmailBlank").style.display = "block";
             document.getElementById("submit").disabled = true;
-        }
-        else {
+        } else {
             document.getElementById("errorEmailBlank").style.display = "none";
             if (re.test(String(email)) == false) {
                 document.getElementById("errorEmailConvert").style.display = "block";
                 document.getElementById("submit").disables = true;
-            }
-            else {
+            } else {
                 document.getElementById("errorEmailConvert").style.display = "none";
                 for (var i = 0; i < aa.length; i++) {
                     var a = aa[i];
@@ -140,8 +156,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                 if (kt == true) {
                     document.getElementById("submit").disabled = true;
                     document.getElementById("errorEmailUnique").style.display = "block";
-                }
-                else {
+                } else {
                     document.getElementById("submit").disabled = false;
                     document.getElementById("errorEmailUnique").style.display = "none";
                 }
@@ -158,14 +173,12 @@ License URL: http://creativecommons.org/licenses/by/3.0/
         if (phone.length == 0) {
             document.getElementById("errorPhoneBlank").style.display = "block";
             document.getElementById("submit").disabled = true;
-        }
-        else {
+        } else {
             document.getElementById("errorPhoneBlank").style.display = "none";
             if (re.test(String(phone)) == false) {
                 document.getElementById("errorPhoneConvert").style.display = "block";
                 document.getElementById("submit").disables = true;
-            }
-            else {
+            } else {
                 document.getElementById("errorPhoneConvert").style.display = "none";
                 for (var i = 0; i < aa.length; i++) {
                     var a = aa[i];
@@ -176,24 +189,29 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                 if (kt == true) {
                     document.getElementById("submit").disabled = true;
                     document.getElementById("errorPhoneUnique").style.display = "block";
-                }
-                else {
+                } else {
                     document.getElementById("submit").disabled = false;
                     document.getElementById("errorPhoneUnique").style.display = "none";
                 }
             }
         }
     }
-    
+
     function validatePass() {
         var pass = document.getElementById("pass").value;
         if (pass.length == 0) {
             document.getElementById("errorPassBlank").style.display = "block";
             document.getElementById("submit").disabled = true;
-        }
-        else {
+        } else {
             document.getElementById("errorPassBlank").style.display = "none";
-            document.getElementById("submit").disabled = false;
+            if (pass.length < 6) {
+                document.getElementById("errorPassLength").style.display = "block";
+                document.getElementById("submit").disabled = true;
+            }
+            else {
+                document.getElementById("errorPassLength").style.display = "none";
+                document.getElementById("submit").disabled = false;
+            }
         }
     }
 
@@ -204,14 +222,12 @@ License URL: http://creativecommons.org/licenses/by/3.0/
         if (rePass.length == 0) {
             document.getElementById("errorRePassBlank").style.display = "block";
             document.getElementById("submit").disabled = true;
-        }
-        else {
+        } else {
             document.getElementById("errorPassBlank").style.display = "none";
             if (pass != rePass) {
                 document.getElementById("errorRePassEqual").style.display = "block";
                 document.getElementById("submit").disabled = true;
-            }
-            else {
+            } else {
                 document.getElementById("errorRePassEqual").style.display = "none";
                 document.getElementById("submit").disabled = false;
             }

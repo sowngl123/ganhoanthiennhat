@@ -11,6 +11,8 @@ import vn.nuce.dto.UserDto;
 import vn.nuce.service.impl.UserServiceImpl;
 
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.FileInputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,30 +25,36 @@ public class RegistrationController {
 
     @GetMapping("/registration")
     public String showPageDefault(ModelMap modelMap) {
-        List<UserDto> userDtos = service.findAllUsers();
-        List<String> emails = new ArrayList<>();
-        List<String> phones = new ArrayList<>();
-        for (UserDto userDto : userDtos) {
-            emails.add(userDto.getUser_Email());
-            phones.add(userDto.getUser_Phone());
-        }
-        modelMap.addAttribute("listEmail", emails);
-        modelMap.addAttribute("listPhone", phones);
+        try {
+            List<UserDto> userDtos = service.findAllUsers();
+            List<String> emails = new ArrayList<>();
+            List<String> phones = new ArrayList<>();
+            for (UserDto userDto : userDtos) {
+                emails.add(userDto.getUser_Email());
+                phones.add(userDto.getUser_Phone());
+            }
+            modelMap.addAttribute("listEmail", emails);
+            modelMap.addAttribute("listPhone", phones);
 
-        return "registration";
+            return "registration";
+        }
+        catch (Exception e) {
+            return "error";
+        }
     }
 
     @PostMapping("/registration")
     public String saveUser(
-                           @RequestParam(name = "user_Name") String user_Name,
-                           @RequestParam(name = "user_Password") String user_Password,
-                           @RequestParam(name = "REuser_Password") String REuser_Password,
-                           @RequestParam(name = "user_Role") Integer user_Role,
-                           @RequestParam(name = "user_Email") String user_Email,
-                           @RequestParam(name = "user_Status") Integer user_Status,
-                           @RequestParam(name = "user_Gender") Integer user_Gender,
-                           HttpSession session) {
-        UserDto userDto = new UserDto();
+            @RequestParam(name = "user_Name") String user_Name,
+            @RequestParam(name = "user_Password") String user_Password,
+            @RequestParam(name = "REuser_Password") String REuser_Password,
+            @RequestParam(name = "user_Role") Integer user_Role,
+            @RequestParam(name = "user_Email") String user_Email,
+            @RequestParam(name = "user_Status") Integer user_Status,
+            @RequestParam(name = "user_Gender") Integer user_Gender,
+            HttpSession session) {
+        try {
+            UserDto userDto = new UserDto();
             List<UserDto> dtos = service.findAllUsers();
             userDto.setUser_Name(user_Name);
             userDto.setUser_Password(user_Password);
@@ -55,16 +63,31 @@ public class RegistrationController {
             userDto.setUser_Role(user_Role);
             userDto.setUser_Gender(user_Gender);
             userDto.setUser_Phone(user_Name);
+            File file = new File("E:/duantotnghiep/travel/src/main/webapp/resources/home/images/avatar.png");
+            byte[] picByte = new byte[(int) file.length()];
+            try {
+                FileInputStream fileInputStream = new FileInputStream(file);
+                fileInputStream.read(picByte);
+                fileInputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            userDto.setImage(picByte);
+            userDto.setUser_Fullname("Vô danh");
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             userDto.setUser_Createdate(timestamp);
             userDto.setUser_Lastupdate(timestamp);
-            if (REuser_Password.equals(user_Password)){
+            if (REuser_Password.equals(user_Password)) {
                 service.saveUser(userDto);
-                session.setAttribute("status","success");
+                session.setAttribute("status", "success");
             } else {
-                session.setAttribute("status","fail");
+                session.setAttribute("status", "fail");
             }
-        return "redirect:/login";
+            return "redirect:/login";
+        }
+        catch (Exception e) {
+            return "error";
+        }
 
     }
 

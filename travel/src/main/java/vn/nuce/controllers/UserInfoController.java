@@ -39,65 +39,80 @@ public class UserInfoController {
 
     @GetMapping("/user_info")
     public String showUserInfo(HttpSession session, ModelMap modelMap) {
-        if (session.getAttribute("user") != null) {
-            UserDto dto1 = (UserDto) session.getAttribute("user");
-            UserDto dto = userService.findOneUser(dto1.getUser_Id());
-            dto.setBase64Image(Base64.getEncoder().encodeToString(dto.getImage()));
-            List<BookTourDto> bookTourDtos = userService.findBookTourByUserId(dto.getUser_Id());
-            List<BookTourDto> bookTourDtosWait = userService.findBookTourWaitByUserId(dto.getUser_Id());
-            List<BookTourDto> bookTourDtos1 = new ArrayList<>();
-            List<BookTourDto> bookTourDtosWait1 = new ArrayList<>();
-            DecimalFormat df = new DecimalFormat("#");
-            df.setMaximumIntegerDigits(12);
-            for (BookTourDto bookTourDto : bookTourDtos) {
-                bookTourDto.setTourName(bookTourService.findTour(bookTourDto.getRegistration_Id()).getTour_Name());
-                bookTourDto.setPriceFormat(df.format(bookTourDto.getPrice()));
-                bookTourDtos1.add(bookTourDto);
+        try {
+            if (session.getAttribute("user") != null) {
+                UserDto dto1 = (UserDto) session.getAttribute("user");
+                UserDto dto = userService.findOneUser(dto1.getUser_Id());
+                dto.setBase64Image(Base64.getEncoder().encodeToString(dto.getImage()));
+                List<BookTourDto> bookTourDtos = userService.findBookTourByUserId(dto.getUser_Id());
+                List<BookTourDto> bookTourDtosWait = userService.findBookTourWaitByUserId(dto.getUser_Id());
+                List<BookTourDto> bookTourDtos1 = new ArrayList<>();
+                List<BookTourDto> bookTourDtosWait1 = new ArrayList<>();
+                DecimalFormat df = new DecimalFormat("#");
+                df.setMaximumIntegerDigits(12);
+                for (BookTourDto bookTourDto : bookTourDtos) {
+                    bookTourDto.setTourName(bookTourService.findTour(bookTourDto.getRegistration_Id()).getTour_Name());
+                    bookTourDto.setPriceFormat(df.format(bookTourDto.getPrice()));
+                    bookTourDtos1.add(bookTourDto);
+                }
+                for (BookTourDto bookTourDto : bookTourDtosWait) {
+                    bookTourDto.setTourName(bookTourService.findTour(bookTourDto.getRegistration_Id()).getTour_Name());
+                    bookTourDto.setPriceFormat(df.format(bookTourDto.getPrice()));
+                    bookTourDtosWait1.add(bookTourDto);
+                }
+                modelMap.addAttribute("listBookTourWait", bookTourDtosWait1);
+                modelMap.addAttribute("listBookTour", bookTourDtos1);
+                modelMap.addAttribute("dto", dto);
             }
-            for (BookTourDto bookTourDto : bookTourDtosWait) {
-                bookTourDto.setTourName(bookTourService.findTour(bookTourDto.getRegistration_Id()).getTour_Name());
-                bookTourDto.setPriceFormat(df.format(bookTourDto.getPrice()));
-                bookTourDtosWait1.add(bookTourDto);
-            }
-            modelMap.addAttribute("listBookTourWait", bookTourDtosWait1);
-            modelMap.addAttribute("listBookTour", bookTourDtos1);
-            modelMap.addAttribute("dto", dto);
+            return "user_info";
         }
-        return "user_info";
+        catch (Exception e) {
+            return "error";
+        }
     }
 
 
     @GetMapping("/delete")
     public String deleteUser(@RequestParam(name = "action") String action, @RequestParam(name = "id") Long id, HttpSession httpSession) {
-        if (action.equals("delete")) {
-            List<Long> ids = new ArrayList<>();
-            ids.add(id);
-            bookTourService.remove(ids);
-        }
+        try {
+            if (action.equals("delete")) {
+                List<Long> ids = new ArrayList<>();
+                ids.add(id);
+                bookTourService.remove(ids);
+            }
 
-        return "redirect:/home/user_info";
+            return "redirect:/home/user_info";
+        }
+        catch (Exception e) {
+            return "error";
+        }
     }
 
     @GetMapping("/user_info/update")
     public String showUpdateUser(HttpSession session, ModelMap modelMap) {
-        if (session.getAttribute("user") != null) {
-            UserDto dto1 = (UserDto) session.getAttribute("user");
-            UserDto dto = userService.findOneUser(dto1.getUser_Id());
-            dto.setBase64Image(Base64.getEncoder().encodeToString(dto.getImage()));
-            modelMap.addAttribute("dto", dto);
-            List<UserDto> userDtos = userService.findAllUsers();
-            List<String> emails = new ArrayList<>();
-            List<String> phones = new ArrayList<>();
-            for (UserDto userDto : userDtos) {
-                if (userDto.getUser_Id() != dto.getUser_Id()) {
-                    emails.add(userDto.getUser_Email());
-                    phones.add(userDto.getUser_Phone());
+        try {
+            if (session.getAttribute("user") != null) {
+                UserDto dto1 = (UserDto) session.getAttribute("user");
+                UserDto dto = userService.findOneUser(dto1.getUser_Id());
+                dto.setBase64Image(Base64.getEncoder().encodeToString(dto.getImage()));
+                modelMap.addAttribute("dto", dto);
+                List<UserDto> userDtos = userService.findAllUsers();
+                List<String> emails = new ArrayList<>();
+                List<String> phones = new ArrayList<>();
+                for (UserDto userDto : userDtos) {
+                    if (userDto.getUser_Id() != dto.getUser_Id()) {
+                        emails.add(userDto.getUser_Email());
+                        phones.add(userDto.getUser_Phone());
+                    }
                 }
+                modelMap.addAttribute("listEmail", emails);
+                modelMap.addAttribute("listPhone", phones);
             }
-            modelMap.addAttribute("listEmail", emails);
-            modelMap.addAttribute("listPhone", phones);
+            return "update_user";
         }
-        return "update_user";
+        catch (Exception e) {
+            return "error";
+        }
     }
 
     @PostMapping("/user_info/update")
@@ -117,35 +132,50 @@ public class UserInfoController {
 
     @GetMapping("/user_info/change_password")
     public String showChangePassword(HttpSession session, ModelMap modelMap) {
-        if (session.getAttribute("user") != null) {
-            UserDto dto1 = (UserDto) session.getAttribute("user");
-            UserDto dto = userService.findOneUser(dto1.getUser_Id());
-            dto.setBase64Image(Base64.getEncoder().encodeToString(dto.getImage()));
-            modelMap.addAttribute("dto", dto);
+        try {
+            if (session.getAttribute("user") != null) {
+                UserDto dto1 = (UserDto) session.getAttribute("user");
+                UserDto dto = userService.findOneUser(dto1.getUser_Id());
+                dto.setBase64Image(Base64.getEncoder().encodeToString(dto.getImage()));
+                modelMap.addAttribute("dto", dto);
+            }
+            return "change-password";
         }
-        return "change-password";
+        catch (Exception e) {
+            return "error";
+        }
     }
 
     @PostMapping("/user_info/change_password")
     public String changePassword(@ModelAttribute("dto") UserDto userDto, @RequestParam(name = "newPass") String password) {
-        userDto.setUser_Password(password);
-        userDto.setUser_Lastupdate(Timestamp.valueOf(LocalDateTime.now()));
-        userDto.setBase64Image(Base64.getEncoder().encodeToString(userDto.getImage()));
-        userService.updateUser(userDto);
+        try {
+            userDto.setUser_Password(password);
+            userDto.setUser_Lastupdate(Timestamp.valueOf(LocalDateTime.now()));
+            userDto.setBase64Image(Base64.getEncoder().encodeToString(userDto.getImage()));
+            userService.updateUser(userDto);
 
-        return "redirect:/home/user_info";
+            return "redirect:/home/user_info";
+        }
+        catch (Exception e) {
+            return "error";
+        }
     }
 
     @GetMapping("/user_info/book/{id}")
     @ResponseBody
     public BookTourDto getBookTour(@PathVariable("id") Long id) {
-        BookTourDto bookTourDto = bookTourService.findById(id);
-        bookTourDto.setTourName(bookTourService.findTour(id).getTour_Name());
-        DecimalFormat df = new DecimalFormat("#");
-        df.setMaximumIntegerDigits(12);
-        bookTourDto.setPriceFormat(df.format(bookTourDto.getPrice()));
-        System.out.println(bookTourDto.getPriceFormat());
-        return bookTourDto;
+        try {
+            BookTourDto bookTourDto = bookTourService.findById(id);
+            bookTourDto.setTourName(bookTourService.findTour(id).getTour_Name());
+            DecimalFormat df = new DecimalFormat("#");
+            df.setMaximumIntegerDigits(12);
+            bookTourDto.setPriceFormat(df.format(bookTourDto.getPrice()));
+            System.out.println(bookTourDto.getPriceFormat());
+            return bookTourDto;
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
 
 }

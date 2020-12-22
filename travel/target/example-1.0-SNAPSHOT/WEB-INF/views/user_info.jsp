@@ -241,8 +241,17 @@
                                         <td><p style="color: black">${list.tourName}</p></td>
                                         <td><p style="color: black">${list.createDateFormat}</p></td>
                                         <td>
-                                            <p id="payStatusF" style="color: black"></p>
-                                            <input type="hidden" value="${list.payStatus}" id="payStatus">
+                                            <c:choose>
+                                                <c:when test="${list.payStatus == 1}">
+                                                    <p style="color: #5cb85c">Đã thanh toán</p>
+                                                </c:when>
+                                                <c:when test="${list.payStatus == 0}">
+                                                    <p style="color: red">Chưa thanh toán</p>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <p style="color: #5cb85c">Chưa thanh toán</p>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </td>
                                         <td>
                                             <button class="btn btn-lg btn-success" type="button"
@@ -376,7 +385,6 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success">Thông tin tour</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
             </div>
         </div>
@@ -425,21 +433,14 @@
         if (gender == 1) {
             gender_value.innerHTML = "Giới tính: Nam";
         }
-        if (gender == 2) {
+        if (gender == 0) {
             gender_value.innerHTML = "Giới tính: Nữ";
         }
-        if (gender == 3) {
+        if (gender == 2) {
             gender_value.innerHTML = "Giới tính: Khác";
         }
-
-        var pay = document.getElementById("payStatus").value;
-        var payF = document.getElementById("payStatusF");
-
-        if (pay == 0) {
-            payF.innerHTML = "Chưa thanh toán";
-        }
-        if (pay == 1) {
-            payF.innerHTML = "Đã thanh toán";
+        if (gender == 3) {
+            gender_value.innerHTML = "Giới tính: Chưa có"
         }
     }
 
